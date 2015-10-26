@@ -10,7 +10,6 @@ public class TasksAdapterTouchCallback extends ItemTouchHelper.Callback {
 
     public interface DraggableAdapter {
         void onItemSwiped(RecyclerView.ViewHolder viewHolder);
-
         boolean onItemMoved(int fromPosition, int toPosition);
     }
 
@@ -27,8 +26,7 @@ public class TasksAdapterTouchCallback extends ItemTouchHelper.Callback {
 
     @Override
     public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-        //draggableAdapter.onItemMoved();
-        return false;
+        return draggableAdapter.onItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
     }
 
     @Override

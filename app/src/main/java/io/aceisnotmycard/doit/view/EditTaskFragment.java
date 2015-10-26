@@ -92,7 +92,7 @@ public class EditTaskFragment extends BaseFragment {
         rx.Observable<String> textObs = RxTextView.textChanges(b.editTaskText)
                 .map(CharSequence::toString);
 
-        addSubscription(rx.Observable.combineLatest(titleObs, textObs, (title, text) -> new TaskUpdatedEvent(title, text))
+        addSubscription(rx.Observable.combineLatest(titleObs, textObs, (title, text) -> new TaskUpdatedEvent(new Task(title, text)))
                 .debounce(250L, TimeUnit.MILLISECONDS)
                 .subscribe(taskUpdatedEvent -> {
                     Pipe.getObserver().onNext(taskUpdatedEvent);

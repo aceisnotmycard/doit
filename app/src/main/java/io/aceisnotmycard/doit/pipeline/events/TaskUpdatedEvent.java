@@ -10,8 +10,8 @@ public class TaskUpdatedEvent extends AbstactEvent {
 
     Task data;
 
-    public TaskUpdatedEvent(String title, String text) {
-        data = new Task(title, text);
+    public TaskUpdatedEvent(Task t) {
+        data = t;
     }
 
     @Override

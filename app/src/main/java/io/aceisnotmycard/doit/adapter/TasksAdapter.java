@@ -6,10 +6,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import java.util.Collections;
+
 import io.aceisnotmycard.doit.databinding.TaskItemBinding;
 import io.aceisnotmycard.doit.model.Task;
 import io.aceisnotmycard.doit.pipeline.Pipe;
 import io.aceisnotmycard.doit.pipeline.events.TaskRemovedEvent;
+import io.aceisnotmycard.doit.pipeline.events.TaskUpdatedEvent;
 import io.aceisnotmycard.doit.pipeline.events.TasksListClickEvent;
 import io.aceisnotmycard.doit.viewmodel.ListItemViewModel;
 
@@ -33,7 +36,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
 
             @Override
             public void onItemRangeChanged(ObservableList<Task> sender, int positionStart, int itemCount) {
-                notifyItemRangeChanged(positionStart, itemCount);
+                //notifyItemRangeChanged(positionStart, itemCount);
             }
 
             @Override
@@ -80,7 +83,22 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
 
     @Override
     public boolean onItemMoved(int fromPosition, int toPosition) {
-        return false;
+        if (fromPosition < toPosition) {
+            for (int i = fromPosition; i < toPosition; i++) {
+                Collections.swap(items, i, i + 1);
+            }
+        } else {
+            for (int i = fromPosition; i > toPosition; i--) {
+                Collections.swap(items, i, i - 1);
+            }
+        }
+        int tmp = items.get(fromPosition).getPosition();
+        items.get(fromPosition).setPosition(items.get(toPosition).getPosition());
+        items.get(toPosition).setPosition(tmp);
+        Pipe.getObserver().onNext(new TaskUpdatedEvent(items.get(toPosition)));
+        Pipe.getObserver().onNext(new TaskUpdatedEvent(items.get(fromPosition)));
+        notifyItemMoved(fromPosition, toPosition);
+        return true;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

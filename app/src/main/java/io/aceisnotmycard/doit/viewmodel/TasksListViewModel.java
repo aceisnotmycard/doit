@@ -11,6 +11,7 @@ import io.aceisnotmycard.doit.db.TaskDao;
 import io.aceisnotmycard.doit.model.Task;
 import io.aceisnotmycard.doit.pipeline.Pipe;
 import io.aceisnotmycard.doit.pipeline.events.TaskRemovedEvent;
+import io.aceisnotmycard.doit.pipeline.events.TaskUpdatedEvent;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -39,8 +40,17 @@ public class TasksListViewModel extends BaseViewModel {
         addSubscription(Pipe.getObservable()
                 .filter(abstactEvent -> abstactEvent instanceof TaskRemovedEvent)
                 .map(abstactEvent1 -> (TaskRemovedEvent) abstactEvent1)
+                .subscribeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.io())
-                .subscribe(taskRemovedEvent -> remove(taskRemovedEvent.getData())
+                .subscribe(taskRemovedEvent -> TaskDao.getDao(context).delete(taskRemovedEvent.getData())
+                ));
+
+        addSubscription(Pipe.getObservable()
+                .filter(abstactEvent -> abstactEvent instanceof TaskUpdatedEvent)
+                .map(abstactEvent1 -> (TaskUpdatedEvent) abstactEvent1)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
+                .subscribe(taskUpdatedEvent -> TaskDao.getDao(context).update(taskUpdatedEvent.getData())
             ));
     }
 
@@ -48,8 +58,5 @@ public class TasksListViewModel extends BaseViewModel {
         return items;
     }
 
-    private void remove(Task task) {
-        TaskDao.getDao(context).delete(task);
-    }
 }
 
