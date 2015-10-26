@@ -26,7 +26,7 @@ import rx.subscriptions.CompositeSubscription;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class EditTaskFragment extends DialogFragment {
+public class EditTaskFragment extends BaseFragment {
 
     private static final String TAG = EditTaskFragment.class.getSimpleName();
 
@@ -35,10 +35,6 @@ public class EditTaskFragment extends DialogFragment {
     private EditTaskViewModel viewModel;
     private FragmentEditTaskBinding b;
     private android.support.v7.app.ActionBar actionBar;
-
-    private CompositeSubscription subscriptions;
-
-    private Task task;
 
     public static EditTaskFragment newInstance(Task t) {
         Bundle args = new Bundle();
@@ -61,13 +57,7 @@ public class EditTaskFragment extends DialogFragment {
         setRetainInstance(true);
         Bundle args = getArguments();
         if (args != null) {
-            task = args.getParcelable(ARG_TASK);
-            if (task == null) {
-                Log.i(TAG, "task is null! WTF?");
-            }
-            viewModel = new EditTaskViewModel(task, getActivity());
-        } else {
-            viewModel = new EditTaskViewModel(getActivity());
+            viewModel = new EditTaskViewModel(args.getParcelable(ARG_TASK), getActivity());
         }
     }
 
@@ -78,6 +68,7 @@ public class EditTaskFragment extends DialogFragment {
         b.setViewModel(viewModel);
 
         ((AppCompatActivity) getActivity()).setSupportActionBar(b.editTaskToolbar);
+
         actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -85,7 +76,6 @@ public class EditTaskFragment extends DialogFragment {
         b.editTaskToolbar.setNavigationOnClickListener(v ->
                         Pipe.getObserver().onNext(new TaskEditCompleteEvent())
         );
-
         return b.getRoot();
     }
 
@@ -93,15 +83,13 @@ public class EditTaskFragment extends DialogFragment {
     public void onResume() {
         super.onResume();
 
-        subscriptions = new CompositeSubscription();
-
         rx.Observable<String> titleObs = RxTextView.textChanges(b.editTaskTitle)
                 .map(CharSequence::toString)
                 .filter(s -> !s.isEmpty());
         rx.Observable<String> textObs = RxTextView.textChanges(b.editTaskText)
                 .map(CharSequence::toString);
 
-        subscriptions.add(rx.Observable.combineLatest(titleObs, textObs, (title, text) -> new TaskUpdatedEvent(title, text))
+        addSubscription(rx.Observable.combineLatest(titleObs, textObs, (title, text) -> new TaskUpdatedEvent(title, text))
                 .debounce(250L, TimeUnit.MILLISECONDS)
                 .subscribe(taskUpdatedEvent -> {
                     Pipe.getObserver().onNext(taskUpdatedEvent);
@@ -112,6 +100,5 @@ public class EditTaskFragment extends DialogFragment {
     public void onPause() {
         super.onPause();
         viewModel.onPause();
-        subscriptions.unsubscribe();
     }
 }

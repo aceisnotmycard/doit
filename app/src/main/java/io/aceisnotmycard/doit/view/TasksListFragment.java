@@ -20,7 +20,7 @@ import io.aceisnotmycard.doit.viewmodel.TasksListViewModel;
  * Created by sergey on 20/10/15.
  *
  */
-public class TasksListFragment extends Fragment {
+public class TasksListFragment extends BaseFragment {
 
     private TasksListFragmentBinding b;
     private TasksListViewModel viewModel;
@@ -35,7 +35,6 @@ public class TasksListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // retain this fragment when activity is re-initialized
         setRetainInstance(true);
     }
 
@@ -60,6 +59,8 @@ public class TasksListFragment extends Fragment {
         ItemTouchHelper touchHelper = new ItemTouchHelper(touchCallback);
         touchHelper.attachToRecyclerView(b.tasksListView);
     }
+
+
 
     @Override
     public void onPause() {

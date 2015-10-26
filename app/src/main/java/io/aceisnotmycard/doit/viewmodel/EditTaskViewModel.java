@@ -17,7 +17,7 @@ import rx.subscriptions.CompositeSubscription;
  * Created by sergey on 22/10/15.
  *
  */
-public class EditTaskViewModel extends BaseObservable {
+public class EditTaskViewModel extends BaseViewModel {
 
     public static final String TAG = EditTaskViewModel.class.getSimpleName();
 
@@ -25,27 +25,31 @@ public class EditTaskViewModel extends BaseObservable {
     private Context context;
     private boolean isNew;
 
-    private CompositeSubscription subscriptions;
-
     public EditTaskViewModel(Task task, Context context) {
-        this.task = task;
-        this.context = context;
-        isNew = false;
-        init();
-    }
+        super();
+        if (task != null) {
+            this.task = task;
+            isNew = false;
+        } else {
+            this.task = new Task();
+            isNew = true;
+        }
 
-    public EditTaskViewModel(Context context) {
-        task = new Task();
         this.context = context;
-        isNew = true;
-        init();
+        addSubscription(Pipe.getObservable()
+                .filter(abstactEvent -> abstactEvent instanceof TaskUpdatedEvent)
+                .map(abstactEvent1 -> (TaskUpdatedEvent) abstactEvent1)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
+                .subscribe(taskUpdatedEvent -> {
+                    createOrUpdate(taskUpdatedEvent.getData());
+                }));
     }
 
     private void createOrUpdate(Task updater) {
         if (isNew) {
             isNew = false;
             int id = TaskDao.getDao(context).insert(updater.getTitle(), updater.getText());
-            Log.i(TAG, String.valueOf(id));
             task.setText(updater.getText());
             task.setTitle(updater.getTitle());
             task.setPosition(id);
@@ -68,19 +72,8 @@ public class EditTaskViewModel extends BaseObservable {
         return task.getText();
     }
 
-    private void init() {
-        subscriptions = new CompositeSubscription();
-        subscriptions.add(Pipe.getObservable()
-                .filter(abstactEvent -> abstactEvent instanceof TaskUpdatedEvent)
-                .map(abstactEvent1 -> (TaskUpdatedEvent) abstactEvent1)
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .observeOn(Schedulers.io())
-                .subscribe(taskUpdatedEvent -> {
-                    createOrUpdate(taskUpdatedEvent.getData());
-                }));
-    }
-
     public void onPause() {
-        subscriptions.unsubscribe();
+        super.onPause();
+        context = null;
     }
 }

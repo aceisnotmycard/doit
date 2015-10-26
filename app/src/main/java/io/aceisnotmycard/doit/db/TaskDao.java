@@ -23,20 +23,11 @@ public class TaskDao {
 
     private static final String TAG = TaskDao.class.getSimpleName();
 
-    private enum Action {
-        READ,
-        INSERT,
-        UPDATE,
-        DELETE
-    }
-
-    private Action action;
     private DoItHelper dbHelper;
     private SqlBrite sqlBrite;
     BriteDatabase db;
 
     private TaskDao(Context context) {
-        action = Action.READ;
         sqlBrite = SqlBrite.create();
         dbHelper = new DoItHelper(context);
         db = sqlBrite.wrapDatabaseHelper(dbHelper);
@@ -44,7 +35,7 @@ public class TaskDao {
 
     public static TaskDao getDao(Context context) {
         if (DAO == null) {
-            DAO = new TaskDao(context);
+            DAO = new TaskDao(context.getApplicationContext());
         }
         return DAO;
     }
@@ -60,7 +51,6 @@ public class TaskDao {
 
 
     public Observable<List<Task>> getTasks(){
-        action = Action.READ;
         return db.createQuery(DoItContract.Task.TABLE_NAME,
                 "SELECT * FROM " + DoItContract.Task.TABLE_NAME)
                 .mapToList(MAPPER)
@@ -68,7 +58,6 @@ public class TaskDao {
     }
 
     public int insert(Task task) {
-        action = Action.INSERT;
         ContentValues cv = new Builder()
                 .text(task.getText())
                 .title(task.getTitle())
@@ -77,7 +66,6 @@ public class TaskDao {
     }
 
     public int insert(String title, String text) {
-        action = Action.INSERT;
         ContentValues cv = new Builder()
                 .text(text)
                 .title(title)
@@ -86,7 +74,6 @@ public class TaskDao {
     }
 
     public boolean update(Task task) {
-        action = Action.DELETE;
         ContentValues cv = new Builder()
                 .text(task.getText())
                 .title(task.getTitle())
@@ -96,7 +83,6 @@ public class TaskDao {
     }
 
     public boolean delete(Task task) {
-        action = Action.DELETE;
         return db.delete(DoItContract.Task.TABLE_NAME, DoItContract.Task._ID + " = " + task.getPosition()) > 0;
     }
 
