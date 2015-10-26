@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="io.aceisnotmycard.doit.viewmodel.TasksListViewModel" />
+
+        <variable
+            name="handlers"
+            type="io.aceisnotmycard.doit.view.TasksListFragment.Handlers" />
+    </data>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/tasks_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!--<android.support.design.widget.AppBarLayout-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_width="match_parent">-->
+            <!--<android.support.v7.widget.Toolbar-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_width="match_parent"-->
+                <!--app:layout_scrollFlags="scroll|enterAlways"/>-->
+        <!--</android.support.design.widget.AppBarLayout>-->
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="@dimen/fab_margin"
+            android:onClick="@{handlers.onTaskAdd}"
+            app:fabSize="normal" />
+
+    </android.support.design.widget.CoordinatorLayout>
+
+</layout>

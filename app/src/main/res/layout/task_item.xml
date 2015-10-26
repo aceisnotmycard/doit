@@ -1,0 +1,26 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="io.aceisnotmycard.doit.viewmodel.ListItemViewModel"/>
+    </data>
+
+    <FrameLayout
+        android:id="@+id/task_item_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/list_item_height"
+        android:background="#ffffff">
+
+        <TextView
+            android:id="@+id/task_item_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="8dp"
+            android:textSize="@dimen/normal_text_size"
+            android:text="@{viewModel.title}" />
+
+    </FrameLayout>
+</layout>
