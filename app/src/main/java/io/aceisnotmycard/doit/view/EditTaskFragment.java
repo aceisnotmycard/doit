@@ -55,16 +55,22 @@ public class EditTaskFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        Bundle args = getArguments();
-        if (args != null) {
-            viewModel = new EditTaskViewModel(args.getParcelable(ARG_TASK), getActivity());
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         b = FragmentEditTaskBinding.inflate(inflater);
+        return b.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Bundle args = getArguments();
+        viewModel = new EditTaskViewModel(args != null ? args.getParcelable(ARG_TASK) : null,
+                getActivity());
+
         b.setViewModel(viewModel);
 
         ((AppCompatActivity) getActivity()).setSupportActionBar(b.editTaskToolbar);
@@ -73,10 +79,7 @@ public class EditTaskFragment extends BaseFragment {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        b.editTaskToolbar.setNavigationOnClickListener(v ->
-                        Pipe.getObserver().onNext(new TaskEditCompleteEvent())
-        );
-        return b.getRoot();
+        b.editTaskToolbar.setNavigationOnClickListener(v -> Pipe.getObserver().onNext(new TaskEditCompleteEvent()));
     }
 
     @Override

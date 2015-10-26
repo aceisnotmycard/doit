@@ -21,7 +21,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        subscriptions = new CompositeSubscription();
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             setFragment(TasksListFragment.newInstance());
@@ -38,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        subscriptions = new CompositeSubscription();
         subscriptions.add(Pipe.getObservable().filter(event -> event instanceof NewTaskEvent)
                 .map(event -> (NewTaskEvent) event)
                 .subscribe(event -> {

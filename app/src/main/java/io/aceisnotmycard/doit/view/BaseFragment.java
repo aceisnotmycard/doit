@@ -3,7 +3,6 @@ package io.aceisnotmycard.doit.view;
 import android.app.Fragment;
 import android.os.Bundle;
 
-import io.aceisnotmycard.doit.viewmodel.BaseViewModel;
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
 

@@ -40,16 +40,6 @@ public class TaskDao {
         return DAO;
     }
 
-    public void close() {
-        dbHelper.close();
-        try {
-            db.close();
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
-        }
-    }
-
-
     public Observable<List<Task>> getTasks(){
         return db.createQuery(DoItContract.Task.TABLE_NAME,
                 "SELECT * FROM " + DoItContract.Task.TABLE_NAME)

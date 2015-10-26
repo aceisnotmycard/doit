@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class DoItHelper extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME = "nottodo.db";
+    private static final String DATABASE_NAME = "doit.db";
     public static final int DATABASE_VERSION = 1;
 
     public DoItHelper(Context context) {
@@ -25,7 +25,6 @@ public class DoItHelper extends SQLiteOpenHelper {
                         ");"
         );
     }
-
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
