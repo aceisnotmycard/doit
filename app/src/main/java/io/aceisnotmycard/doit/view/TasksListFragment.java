@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import io.aceisnotmycard.doit.R;
 import io.aceisnotmycard.doit.adapter.TasksAdapter;
 import io.aceisnotmycard.doit.adapter.TasksAdapterTouchCallback;
 import io.aceisnotmycard.doit.databinding.TasksListFragmentBinding;
@@ -53,6 +54,8 @@ public class TasksListFragment extends BaseFragment {
         b.setHandlers(new Handlers());
         b.tasksListView.setLayoutManager(new LinearLayoutManager(getActivity()));
         b.tasksListView.setAdapter(adapter);
+
+        b.tasksListToolbar.setTitle(R.string.app_name);
 
         TasksAdapterTouchCallback touchCallback = new TasksAdapterTouchCallback(adapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(touchCallback);
