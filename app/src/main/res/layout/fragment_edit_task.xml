@@ -18,8 +18,7 @@
             android:id="@+id/edit_task_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:elevation="@dimen/elevation_normal"
-            android:background="@{viewModel.important ? @color/colorAccent : @color/white}">
+            android:elevation="@dimen/elevation_normal">
             <EditText
                 android:id="@+id/edit_task_title"
                 android:layout_width="match_parent"

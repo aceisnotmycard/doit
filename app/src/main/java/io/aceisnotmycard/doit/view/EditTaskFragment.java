@@ -45,8 +45,6 @@ public class EditTaskFragment extends BaseFragment {
     private FragmentEditTaskBinding b;
     private android.support.v7.app.ActionBar actionBar;
 
-    private boolean importantChecked;
-
     public static EditTaskFragment newInstance(Task t) {
         Bundle args = new Bundle();
         args.putParcelable(ARG_TASK, t);
@@ -103,7 +101,8 @@ public class EditTaskFragment extends BaseFragment {
         rx.Observable<String> textObs = RxTextView.textChanges(b.editTaskText)
                 .map(CharSequence::toString);
 
-        rx.Observable<Boolean> importantObs = RxCompoundButton.checkedChanges(b.editTaskImportant);
+        rx.Observable<Boolean> importantObs = RxCompoundButton.checkedChanges(b.editTaskImportant)
+                .doOnNext(this::setToolbarColor);
 
         addSubscription(rx.Observable.combineLatest(titleObs, textObs, importantObs, (title, text, important) ->
                 new TaskUpdatedEvent(new Task(title, text, important)))
@@ -112,6 +111,11 @@ public class EditTaskFragment extends BaseFragment {
                     Log.i(TAG, String.valueOf(taskUpdatedEvent.getData().isImportant()));
                     Pipe.getObserver().onNext(taskUpdatedEvent);
                 }));
+    }
+
+    private void setToolbarColor(boolean isImportant) {
+            b.editTaskToolbar.setBackgroundColor(ContextCompat.getColor(getActivity(),
+                    isImportant ? R.color.colorAccent : R.color.white));
     }
 
     @Override

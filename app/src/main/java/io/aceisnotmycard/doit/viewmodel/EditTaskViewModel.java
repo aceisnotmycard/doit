@@ -49,7 +49,6 @@ public class EditTaskViewModel extends BaseViewModel {
 
     // TODO: refactor
     private void createOrUpdate(Task updater) {
-        notifyPropertyChanged(BR.important);
         if (isNew) {
             isNew = false;
             int id = TaskDao.getDao(context).insert(updater.getTitle(), updater.getText());
