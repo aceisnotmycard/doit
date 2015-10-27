@@ -51,6 +51,7 @@ public class TaskDao {
         ContentValues cv = new Builder()
                 .text(task.getText())
                 .title(task.getTitle())
+                .important(task.isImportant())
                 .build();
         return (int) db.insert(DoItContract.Task.TABLE_NAME, cv);
     }
@@ -59,6 +60,7 @@ public class TaskDao {
         ContentValues cv = new Builder()
                 .text(text)
                 .title(title)
+                .important(false)
                 .build();
         return (int) db.insert(DoItContract.Task.TABLE_NAME, cv);
     }
@@ -68,6 +70,7 @@ public class TaskDao {
                 .text(task.getText())
                 .title(task.getTitle())
                 .position(task.getPosition())
+                .important(task.isImportant())
                 .build();
         return db.update(DoItContract.Task.TABLE_NAME, cv, DoItContract.Task._ID + " = " + task.getPosition()) > 0;
     }
@@ -80,7 +83,8 @@ public class TaskDao {
         int id = (int) c.getLong(c.getColumnIndex(DoItContract.Task._ID));
         String title = c.getString(c.getColumnIndex(DoItContract.Task.COL_TITLE));
         String text = c.getString(c.getColumnIndex(DoItContract.Task.COL_TEXT));
-        return new Task(title, id, text, false);
+        boolean important = c.getInt(c.getColumnIndex(DoItContract.Task.COL_IMPORTANT)) > 0;
+        return new Task(title, id, text, important);
     };
 
 
@@ -99,6 +103,11 @@ public class TaskDao {
 
         public Builder position(int pos) {
             cv.put(DoItContract.Task._ID, pos);
+            return this;
+        }
+
+        public Builder important(boolean important) {
+            cv.put(DoItContract.Task.COL_IMPORTANT, important ? 1 : 0);
             return this;
         }
 

@@ -20,7 +20,13 @@ public class ListItemViewModel extends BaseObservable {
         return task.getTitle();
     }
 
+    @Bindable
+    public boolean getImportant() {
+        return task.isImportant();
+    }
+
     public Task getTask() {
         return task;
     }
+
 }

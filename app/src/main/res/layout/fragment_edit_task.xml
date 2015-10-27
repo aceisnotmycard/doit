@@ -10,26 +10,36 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/windowBackground">
 
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/edit_task_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <EditText
-            android:id="@+id/edit_task_title"
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Title"
-            android:text="@{viewModel.title ?? viewModel.title}" />
+            android:elevation="@dimen/elevation_normal"
+            android:background="@{viewModel.important ? @color/colorAccent : @color/white}">
+            <EditText
+                android:id="@+id/edit_task_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/title_hint"
+                android:text="@{viewModel.title}" />
+        </android.support.v7.widget.Toolbar>
+
+        <CheckBox
+            android:id="@+id/edit_task_important"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/is_important"
+            android:checked="@{viewModel.important}"/>
 
         <EditText
             android:id="@+id/edit_task_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Text"
-            android:text="@{viewModel.text ?? viewModel.text}" />
+            android:hint="@string/text_hint"
+            android:text="@{viewModel.text}" />
     </LinearLayout>
 </layout>

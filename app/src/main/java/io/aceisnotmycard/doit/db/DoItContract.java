@@ -10,5 +10,6 @@ public class DoItContract {
         public static final String TABLE_NAME = "tasks";
         public static final String COL_TEXT = "text";
         public static final String COL_TITLE = "title";
+        public static final String COL_IMPORTANT = "important";
     }
 }

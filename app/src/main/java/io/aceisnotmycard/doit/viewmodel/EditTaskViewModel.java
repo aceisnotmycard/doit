@@ -5,6 +5,7 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.util.Log;
 
+import io.aceisnotmycard.doit.BR;
 import io.aceisnotmycard.doit.db.TaskDao;
 import io.aceisnotmycard.doit.model.Task;
 import io.aceisnotmycard.doit.pipeline.Pipe;
@@ -46,16 +47,20 @@ public class EditTaskViewModel extends BaseViewModel {
                 }));
     }
 
+    // TODO: refactor
     private void createOrUpdate(Task updater) {
+        notifyPropertyChanged(BR.important);
         if (isNew) {
             isNew = false;
             int id = TaskDao.getDao(context).insert(updater.getTitle(), updater.getText());
+            task.setImportant(updater.isImportant());
             task.setText(updater.getText());
             task.setTitle(updater.getTitle());
             task.setPosition(id);
         } else {
             task.setText(updater.getText());
             task.setTitle(updater.getTitle());
+            task.setImportant(updater.isImportant());
             if (!TaskDao.getDao(context).update(task)) {
                 Log.d(TAG, "Task is not updated for some reason");
             }
@@ -70,6 +75,11 @@ public class EditTaskViewModel extends BaseViewModel {
     @Bindable
     public String getText() {
         return task.getText();
+    }
+
+    @Bindable
+    public Boolean getImportant() {
+        return task.isImportant();
     }
 
     public void onPause() {

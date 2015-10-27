@@ -11,7 +11,7 @@
         android:id="@+id/task_item_view"
         android:layout_width="match_parent"
         android:layout_height="@dimen/list_item_height"
-        android:background="#ffffff">
+        android:background="@{viewModel.important ? @color/colorAccent : @color/white}">
 
         <TextView
             android:id="@+id/task_item_title"

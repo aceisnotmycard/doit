@@ -18,9 +18,10 @@ public class Task implements Parcelable {
 
     public Task() {}
 
-    public Task(String title, String text) {
+    public Task(String title, String text, boolean important) {
         this.title = title;
         this.text = text;
+        this.important = important;
     }
 
     public String getTitle() {
