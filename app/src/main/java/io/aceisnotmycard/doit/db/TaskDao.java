@@ -47,6 +47,15 @@ public class TaskDao {
                 .take(1);
     }
 
+    // todo: refactor
+    public Observable<List<Task>> searchFor(String term) {
+        return db.createQuery(DoItContract.Task.TABLE_NAME,
+                "SELECT * FROM " + DoItContract.Task.TABLE_NAME
+                        + " WHERE " + DoItContract.Task.COL_TITLE + " LIKE " + "'%" + term + "%'")
+                .mapToList(MAPPER)
+                .take(1);
+    }
+
     public int insert(Task task) {
         ContentValues cv = new Builder()
                 .text(task.getText())

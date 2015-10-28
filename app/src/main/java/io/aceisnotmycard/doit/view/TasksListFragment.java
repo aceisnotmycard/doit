@@ -9,6 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.jakewharton.rxbinding.widget.RxTextView;
+import com.jakewharton.rxbinding.widget.TextViewTextChangeEvent;
+
+import java.util.concurrent.TimeUnit;
 
 import io.aceisnotmycard.doit.R;
 import io.aceisnotmycard.doit.adapter.TasksAdapter;
@@ -16,12 +19,9 @@ import io.aceisnotmycard.doit.adapter.TasksAdapterTouchCallback;
 import io.aceisnotmycard.doit.databinding.TasksListFragmentBinding;
 import io.aceisnotmycard.doit.pipeline.Pipe;
 import io.aceisnotmycard.doit.pipeline.events.NewTaskEvent;
+import io.aceisnotmycard.doit.pipeline.events.SearchEvent;
 import io.aceisnotmycard.doit.viewmodel.TasksListViewModel;
 
-/**
- * Created by sergey on 20/10/15.
- *
- */
 public class TasksListFragment extends BaseFragment {
 
     private TasksListFragmentBinding b;
@@ -67,8 +67,10 @@ public class TasksListFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        addSubscription(RxTextView.textChangeEvents(b.tasksListSearch).subscribe(textViewTextChangeEvent -> {
-        }));
+        addSubscription(RxTextView.textChanges(b.tasksListSearch)
+                .map(CharSequence::toString)
+                .debounce(100L, TimeUnit.MICROSECONDS)
+                .subscribe(text -> Pipe.sendEvent(new SearchEvent(text))));
     }
 
     @Override
