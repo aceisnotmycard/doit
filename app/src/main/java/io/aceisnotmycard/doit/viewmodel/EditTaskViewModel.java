@@ -35,16 +35,9 @@ public class EditTaskViewModel extends BaseViewModel {
             this.task = new Task();
             isNew = true;
         }
-
         this.context = context;
-        addSubscription(Pipe.getObservable()
-                .filter(abstactEvent -> abstactEvent instanceof TaskUpdatedEvent)
-                .map(abstactEvent1 -> (TaskUpdatedEvent) abstactEvent1)
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .observeOn(Schedulers.io())
-                .subscribe(taskUpdatedEvent -> {
-                    createOrUpdate(taskUpdatedEvent.getData());
-                }));
+        addSubscription(Pipe.recvEvent(TaskUpdatedEvent.class, AndroidSchedulers.mainThread(), Schedulers.io(),
+                taskUpdatedEvent -> createOrUpdate(taskUpdatedEvent.getData())));
     }
 
     // TODO: refactor

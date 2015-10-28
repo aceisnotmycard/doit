@@ -77,7 +77,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
     @Override
     public void onItemSwiped(RecyclerView.ViewHolder viewHolder) {
         final Task t = ((ViewHolder) viewHolder).getBinding().getViewModel().getTask();
-        Pipe.getObserver().onNext(new TaskRemovedEvent(t));
+        Pipe.sendEvent(new TaskRemovedEvent(t));
         items.remove(viewHolder.getAdapterPosition());
     }
 
@@ -95,8 +95,8 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
         int tmp = items.get(fromPosition).getPosition();
         items.get(fromPosition).setPosition(items.get(toPosition).getPosition());
         items.get(toPosition).setPosition(tmp);
-        Pipe.getObserver().onNext(new TaskUpdatedEvent(items.get(toPosition)));
-        Pipe.getObserver().onNext(new TaskUpdatedEvent(items.get(fromPosition)));
+        Pipe.sendEvent(new TaskUpdatedEvent(items.get(toPosition)));
+        Pipe.sendEvent(new TaskUpdatedEvent(items.get(fromPosition)));
         notifyItemMoved(fromPosition, toPosition);
         return true;
     }
@@ -109,7 +109,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
             super(binding.getRoot());
             this.binding = binding;
             itemView.setOnClickListener(v ->
-                Pipe.getObserver().onNext(new TasksListClickEvent(binding.getViewModel().getTask()))
+                Pipe.sendEvent(new TasksListClickEvent(binding.getViewModel().getTask()))
             );
         }
 

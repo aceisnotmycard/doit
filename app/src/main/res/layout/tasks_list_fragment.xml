@@ -28,7 +28,15 @@
                 android:layout_height="wrap_content"
                 app:layout_scrollFlags="scroll|enterAlways"
                 android:background="@color/colorPrimary"
-                android:elevation="10dp"/>
+                android:elevation="10dp">
+
+                <EditText
+                    android:id="@+id/tasks_list_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/search"/>
+
+            </android.support.v7.widget.Toolbar>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/tasks_list_view"

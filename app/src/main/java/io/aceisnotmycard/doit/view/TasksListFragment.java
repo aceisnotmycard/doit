@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.jakewharton.rxbinding.widget.RxTextView;
+
 import io.aceisnotmycard.doit.R;
 import io.aceisnotmycard.doit.adapter.TasksAdapter;
 import io.aceisnotmycard.doit.adapter.TasksAdapterTouchCallback;
@@ -62,7 +64,12 @@ public class TasksListFragment extends BaseFragment {
         touchHelper.attachToRecyclerView(b.tasksListView);
     }
 
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        addSubscription(RxTextView.textChangeEvents(b.tasksListSearch).subscribe(textViewTextChangeEvent -> {
+        }));
+    }
 
     @Override
     public void onPause() {
@@ -72,7 +79,7 @@ public class TasksListFragment extends BaseFragment {
 
     public class Handlers {
         public void onTaskAdd(View v) {
-            Pipe.getObserver().onNext(new NewTaskEvent());
+            Pipe.sendEvent(new NewTaskEvent());
         }
     }
 }

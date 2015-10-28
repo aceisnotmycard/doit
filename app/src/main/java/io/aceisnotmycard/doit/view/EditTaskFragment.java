@@ -1,6 +1,7 @@
 package io.aceisnotmycard.doit.view;
 
 
+import android.animation.Animator;
 import android.app.ActionBar;
 import android.app.DialogFragment;
 import android.os.Bundle;
@@ -10,9 +11,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.Toolbar;
 
 import com.jakewharton.rxbinding.widget.CompoundButtonCheckedChangeEvent;
 import com.jakewharton.rxbinding.widget.RxCompoundButton;
@@ -88,7 +91,7 @@ public class EditTaskFragment extends BaseFragment {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        b.editTaskToolbar.setNavigationOnClickListener(v -> Pipe.getObserver().onNext(new TaskEditCompleteEvent()));
+        b.editTaskToolbar.setNavigationOnClickListener(v -> Pipe.sendEvent(new TaskEditCompleteEvent()));
     }
 
     @Override
@@ -109,7 +112,7 @@ public class EditTaskFragment extends BaseFragment {
                 .debounce(250L, TimeUnit.MILLISECONDS)
                 .subscribe(taskUpdatedEvent -> {
                     Log.i(TAG, String.valueOf(taskUpdatedEvent.getData().isImportant()));
-                    Pipe.getObserver().onNext(taskUpdatedEvent);
+                    Pipe.sendEvent(taskUpdatedEvent);
                 }));
     }
 

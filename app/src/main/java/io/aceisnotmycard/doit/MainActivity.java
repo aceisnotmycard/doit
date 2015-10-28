@@ -38,21 +38,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         subscriptions = new CompositeSubscription();
-        subscriptions.add(Pipe.getObservable().filter(event -> event instanceof NewTaskEvent)
-                .map(event -> (NewTaskEvent) event)
-                .subscribe(event -> {
-                    setFragment(EditTaskFragment.newInstance());
-                }));
-        subscriptions.add(Pipe.getObservable().filter(event -> event instanceof TasksListClickEvent)
-                .map(event -> (TasksListClickEvent) event)
-                .subscribe(event -> {
-                    setFragment(EditTaskFragment.newInstance(event.getData()));
-                }));
-        subscriptions.add(Pipe.getObservable().filter(event -> event instanceof TaskEditCompleteEvent)
-                .map(event -> (TaskEditCompleteEvent) event)
-                .subscribe(event -> {
-                    setFragment(TasksListFragment.newInstance());
-                }));
+        subscriptions.add(Pipe.recvEvent(NewTaskEvent.class, event -> setFragment(EditTaskFragment.newInstance())));
+        subscriptions.add(Pipe.recvEvent(TasksListClickEvent.class, event -> setFragment(EditTaskFragment.newInstance(event.getData()))));
+        subscriptions.add(Pipe.recvEvent(TaskEditCompleteEvent.class, event -> setFragment(TasksListFragment.newInstance())));
     }
 
     @Override
