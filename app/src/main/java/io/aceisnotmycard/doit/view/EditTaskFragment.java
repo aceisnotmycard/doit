@@ -117,5 +117,13 @@ public class EditTaskFragment extends BaseFragment {
     private void setImportantDesign(boolean important) {
         b.editTaskLayout.setBackgroundColor(ContextCompat.getColor(getActivity(),
                 important ? R.color.colorAccent : R.color.colorPrimary));
+        b.editTaskImportant.setImageDrawable(ContextCompat.getDrawable(getActivity(),
+                important ? R.drawable.ic_bookmark_24dp : R.drawable.ic_bookmark_outline_24dp));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        viewModel.onPause();
     }
 }

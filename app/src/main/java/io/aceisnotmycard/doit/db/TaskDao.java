@@ -52,8 +52,13 @@ public class TaskDao {
         return db.createQuery(DoItContract.Task.TABLE_NAME,
                 "SELECT * FROM " + DoItContract.Task.TABLE_NAME
                         + " WHERE " + DoItContract.Task.COL_TITLE + " LIKE " + "'%" + term + "%'")
-                .mapToList(MAPPER)
-                .take(1);
+                .mapToList(MAPPER).doOnNext(this::printTasks);
+    }
+
+    private void printTasks(List<Task> tasks) {
+        for (Task t : tasks) {
+            Log.i("Task", "Position: " + t.getPosition() + " title: " + t.getTitle());
+        }
     }
 
     public int insert(Task task) {

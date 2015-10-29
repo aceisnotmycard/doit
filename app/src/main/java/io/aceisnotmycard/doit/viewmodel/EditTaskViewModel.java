@@ -44,7 +44,7 @@ public class EditTaskViewModel extends BaseViewModel {
     private void createOrUpdate(Task updater) {
         if (isNew) {
             isNew = false;
-            int id = TaskDao.getDao(context).insert(updater.getTitle(), updater.getText());
+            int id = TaskDao.getDao(context).insert(updater);
             task.setImportant(updater.isImportant());
             task.setText(updater.getText());
             task.setTitle(updater.getTitle());
@@ -53,6 +53,7 @@ public class EditTaskViewModel extends BaseViewModel {
             task.setText(updater.getText());
             task.setTitle(updater.getTitle());
             task.setImportant(updater.isImportant());
+            Log.i("Updating", "Position: " + task.getPosition() + " title: " + task.getTitle());
             if (!TaskDao.getDao(context).update(task)) {
                 Log.d(TAG, "Task is not updated for some reason");
             }

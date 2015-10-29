@@ -7,10 +7,6 @@
         <variable
             name="viewModel"
             type="io.aceisnotmycard.doit.viewmodel.TasksListViewModel" />
-
-        <variable
-            name="handlers"
-            type="io.aceisnotmycard.doit.view.TasksListFragment.Handlers" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout
@@ -43,8 +39,8 @@
                         android:layout_height="wrap_content"
                         android:imeOptions="flagNoExtractUi"
                         android:singleLine="true"
+                        android:layout_marginRight="4dp"
                         android:textColor="@color/white"
-                        android:background="@android:color/transparent"
                         android:hint="@string/search" />
                 </android.support.v7.widget.CardView>
 
@@ -64,7 +60,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
             android:layout_margin="@dimen/fab_margin"
-            android:onClick="@{handlers.onTaskAdd}"
             android:src="@drawable/ic_add_24dp"
             app:fabSize="normal" />
 
