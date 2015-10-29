@@ -100,7 +100,7 @@ public class EditTaskFragment extends BaseFragment {
         rx.Observable<String> textObs = RxTextView.textChanges(b.editTaskText)
                 .map(CharSequence::toString);
 
-        rx.Observable<Boolean> importantObs = RxView.clickEvents(b.editTaskImportant)
+        rx.Observable<Boolean> importantObs = RxView.clicks(b.editTaskImportant)
                 .map(viewClickEvent -> !viewModel.getImportant())
                 .startWith(viewModel.getImportant())
                 .doOnNext(this::setImportantDesign);
