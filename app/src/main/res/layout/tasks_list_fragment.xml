@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="viewModel"
             type="io.aceisnotmycard.doit.viewmodel.TasksListViewModel" />
@@ -15,7 +16,7 @@
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/windowBackground">
+        android:background="@color/colorPrimary">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -26,15 +27,26 @@
                 android:id="@+id/tasks_list_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_scrollFlags="scroll|enterAlways"
                 android:background="@color/colorPrimary"
-                android:elevation="10dp">
+                android:elevation="10dp"
+                app:layout_scrollFlags="scroll|enterAlways">
 
-                <EditText
-                    android:id="@+id/tasks_list_search"
+                <android.support.v7.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/search"/>
+                    app:cardBackgroundColor="@color/colorPrimaryDark"
+                    app:cardCornerRadius="2dp">
+
+                    <EditText
+                        android:id="@+id/tasks_list_search"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:imeOptions="flagNoExtractUi"
+                        android:singleLine="true"
+                        android:textColor="@color/white"
+                        android:background="@android:color/transparent"
+                        android:hint="@string/search" />
+                </android.support.v7.widget.CardView>
 
             </android.support.v7.widget.Toolbar>
 
@@ -42,7 +54,7 @@
                 android:id="@+id/tasks_list_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         </LinearLayout>
 

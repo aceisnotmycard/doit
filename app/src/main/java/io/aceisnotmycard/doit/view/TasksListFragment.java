@@ -57,8 +57,6 @@ public class TasksListFragment extends BaseFragment {
         b.tasksListView.setLayoutManager(new LinearLayoutManager(getActivity()));
         b.tasksListView.setAdapter(adapter);
 
-        b.tasksListToolbar.setTitle(R.string.app_name);
-
         TasksAdapterTouchCallback touchCallback = new TasksAdapterTouchCallback(adapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(touchCallback);
         touchHelper.attachToRecyclerView(b.tasksListView);

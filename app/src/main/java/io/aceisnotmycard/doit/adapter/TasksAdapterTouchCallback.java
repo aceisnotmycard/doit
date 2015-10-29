@@ -1,6 +1,7 @@
 package io.aceisnotmycard.doit.adapter;
 
 import android.graphics.Canvas;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
@@ -32,10 +33,11 @@ public class TasksAdapterTouchCallback extends ItemTouchHelper.Callback {
     @Override
     public void onChildDrawOver(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
         super.onChildDrawOver(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+        // todo get elevation values from resources
         if (actionState == ItemTouchHelper.ACTION_STATE_DRAG && isCurrentlyActive) {
             viewHolder.itemView.setElevation(10);
         } else {
-            viewHolder.itemView.setElevation(0);
+            viewHolder.itemView.setElevation(2);
         }
     }
 

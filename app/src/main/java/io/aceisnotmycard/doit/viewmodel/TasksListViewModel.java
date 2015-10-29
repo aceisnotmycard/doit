@@ -1,11 +1,7 @@
 package io.aceisnotmycard.doit.viewmodel;
 
 import android.content.Context;
-import android.databinding.BaseObservable;
 import android.databinding.ObservableArrayList;
-import android.databinding.ObservableList;
-
-import java.util.List;
 
 import io.aceisnotmycard.doit.db.TaskDao;
 import io.aceisnotmycard.doit.model.Task;
@@ -15,9 +11,7 @@ import io.aceisnotmycard.doit.pipeline.events.TaskRemovedEvent;
 import io.aceisnotmycard.doit.pipeline.events.TaskUpdatedEvent;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
 
 public class TasksListViewModel extends BaseViewModel {
 
@@ -28,25 +22,7 @@ public class TasksListViewModel extends BaseViewModel {
         super();
         this.context = context;
         items = new ObservableArrayList<>();
-        addSubscription(TaskDao.getDao(context).getTasks()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(tasks -> {
-                    items.clear();
-                    for (Task task : tasks) {
-                        items.add(task);
-                    }
-                }));
-
-//        addSubscription(TaskDao.getDao(context).searchFor("")
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(tasks -> {
-//                    items.clear();
-//                    for (Task task : tasks) {
-//                        items.add(task);
-//                    }
-//                }));
+        addSubscription(getTasks(""));
 
         addSubscription(Pipe.recvEvent(TaskRemovedEvent.class, AndroidSchedulers.mainThread(), Schedulers.io(),
                 taskRemovedEvent -> TaskDao.getDao(context).delete(taskRemovedEvent.getData())));
@@ -55,18 +31,16 @@ public class TasksListViewModel extends BaseViewModel {
                 taskUpdatedEvent -> TaskDao.getDao(context).update(taskUpdatedEvent.getData())));
 
         addSubscription(Pipe.recvEvent(SearchEvent.class, AndroidSchedulers.mainThread(), Schedulers.io(),
-                searchEvent -> search(searchEvent.getData())));
+                searchEvent -> getTasks(searchEvent.getData())));
     }
 
-    private void search(String term) {
-        TaskDao.getDao(context).searchFor(term)
+    private Subscription getTasks(String term) {
+        return TaskDao.getDao(context).searchFor(term)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(tasks -> {
                     items.clear();
-                    for (Task task : tasks) {
-                        items.add(task);
-                    }
+                    items.addAll(tasks);
                 });
     }
 

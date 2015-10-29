@@ -1,25 +1,23 @@
 package io.aceisnotmycard.doit.view;
 
 
-import android.animation.Animator;
-import android.app.ActionBar;
-import android.app.DialogFragment;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.Toolbar;
 
-import com.jakewharton.rxbinding.widget.CompoundButtonCheckedChangeEvent;
+import com.jakewharton.rxbinding.view.RxView;
 import com.jakewharton.rxbinding.widget.RxCompoundButton;
+import com.jakewharton.rxbinding.widget.RxSearchView;
 import com.jakewharton.rxbinding.widget.RxTextView;
+import com.jakewharton.rxbinding.widget.RxToolbar;
 
 import java.util.concurrent.TimeUnit;
 
@@ -27,12 +25,10 @@ import io.aceisnotmycard.doit.R;
 import io.aceisnotmycard.doit.databinding.FragmentEditTaskBinding;
 import io.aceisnotmycard.doit.model.Task;
 import io.aceisnotmycard.doit.pipeline.Pipe;
+import io.aceisnotmycard.doit.pipeline.events.NewTaskEvent;
 import io.aceisnotmycard.doit.pipeline.events.TaskEditCompleteEvent;
 import io.aceisnotmycard.doit.pipeline.events.TaskUpdatedEvent;
 import io.aceisnotmycard.doit.viewmodel.EditTaskViewModel;
-import rx.Observable;
-import rx.subjects.PublishSubject;
-import rx.subscriptions.CompositeSubscription;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -60,7 +56,8 @@ public class EditTaskFragment extends BaseFragment {
         return new EditTaskFragment();
     }
 
-    public EditTaskFragment() {}
+    public EditTaskFragment() {
+    }
 
 
     @Override
@@ -82,7 +79,6 @@ public class EditTaskFragment extends BaseFragment {
         Bundle args = getArguments();
         viewModel = new EditTaskViewModel(args != null ? args.getParcelable(ARG_TASK) : null,
                 getActivity());
-
         b.setViewModel(viewModel);
 
         ((AppCompatActivity) getActivity()).setSupportActionBar(b.editTaskToolbar);
@@ -104,8 +100,10 @@ public class EditTaskFragment extends BaseFragment {
         rx.Observable<String> textObs = RxTextView.textChanges(b.editTaskText)
                 .map(CharSequence::toString);
 
-        rx.Observable<Boolean> importantObs = RxCompoundButton.checkedChanges(b.editTaskImportant)
-                .doOnNext(this::setToolbarColor);
+        rx.Observable<Boolean> importantObs = RxView.clickEvents(b.editTaskImportant)
+                .map(viewClickEvent -> !viewModel.getImportant())
+                .startWith(viewModel.getImportant())
+                .doOnNext(this::setImportantDesign);
 
         addSubscription(rx.Observable.combineLatest(titleObs, textObs, importantObs, (title, text, important) ->
                 new TaskUpdatedEvent(new Task(title, text, important)))
@@ -116,14 +114,8 @@ public class EditTaskFragment extends BaseFragment {
                 }));
     }
 
-    private void setToolbarColor(boolean isImportant) {
-            b.editTaskToolbar.setBackgroundColor(ContextCompat.getColor(getActivity(),
-                    isImportant ? R.color.colorAccent : R.color.white));
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        viewModel.onPause();
+    private void setImportantDesign(boolean important) {
+        b.editTaskLayout.setBackgroundColor(ContextCompat.getColor(getActivity(),
+                important ? R.color.colorAccent : R.color.colorPrimary));
     }
 }
