@@ -1,6 +1,8 @@
 package io.aceisnotmycard.doit.view;
 
 
+import android.animation.Animator;
+import android.os.Build;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -11,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 
 import com.jakewharton.rxbinding.view.RxView;
@@ -26,6 +29,7 @@ import io.aceisnotmycard.doit.databinding.FragmentEditTaskBinding;
 import io.aceisnotmycard.doit.model.Task;
 import io.aceisnotmycard.doit.pipeline.Pipe;
 import io.aceisnotmycard.doit.pipeline.events.NewTaskEvent;
+import io.aceisnotmycard.doit.pipeline.events.SearchEvent;
 import io.aceisnotmycard.doit.pipeline.events.TaskEditCompleteEvent;
 import io.aceisnotmycard.doit.pipeline.events.TaskUpdatedEvent;
 import io.aceisnotmycard.doit.viewmodel.EditTaskViewModel;
@@ -115,8 +119,13 @@ public class EditTaskFragment extends BaseFragment {
     }
 
     private void setImportantDesign(boolean important) {
-        b.editTaskLayout.setBackgroundColor(ContextCompat.getColor(getActivity(),
-                important ? R.color.colorAccent : R.color.colorPrimary));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            enterReveal(important);
+        } else {
+            b.editTaskLayout.setBackgroundColor(ContextCompat.getColor(getActivity(),
+                    important ? R.color.colorAccent : R.color.colorPrimary));
+        }
+
         b.editTaskImportant.setImageDrawable(ContextCompat.getDrawable(getActivity(),
                 important ? R.drawable.ic_bookmark_24dp : R.drawable.ic_bookmark_outline_24dp));
     }
@@ -125,5 +134,24 @@ public class EditTaskFragment extends BaseFragment {
     public void onPause() {
         super.onPause();
         viewModel.onPause();
+    }
+
+    private void enterReveal(boolean important) {
+        int cx = (int) b.editTaskImportant.getX() + (b.editTaskImportant.getMeasuredWidth() / 2);
+        int cy = (int) b.editTaskImportant.getY() + (b.editTaskImportant.getMeasuredHeight() / 2);
+
+        int radius = Math.max(b.editTaskBackImportant.getHeight(), b.editTaskBackImportant.getWidth());
+
+        Animator anim = ViewAnimationUtils.createCircularReveal(important ? b.editTaskBackImportant : b.editTaskBackUsual,
+                cx, cy, 0, radius);
+        Log.e("ANIM", "CX:" + cx + " CY: " + cy + " radius: " + radius);
+        if (important) {
+            b.editTaskBackImportant.setVisibility(View.VISIBLE);
+            b.editTaskBackUsual.setVisibility(View.INVISIBLE);
+        } else {
+            b.editTaskBackImportant.setVisibility(View.INVISIBLE);
+            b.editTaskBackUsual.setVisibility(View.VISIBLE);
+        }
+        anim.start();
     }
 }

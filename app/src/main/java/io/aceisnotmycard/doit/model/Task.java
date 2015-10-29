@@ -57,6 +57,12 @@ public class Task implements Parcelable {
     }
 
     @Override
+    public boolean equals(Object another) {
+        if (another == this) return true;
+        return another instanceof Task && getPosition() == ((Task) another).getPosition();
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }

@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -64,7 +65,9 @@ public class TasksListFragment extends BaseFragment {
         b.tasksListView.setAdapter(adapter);
 
         b.tasksListToolbar.inflateMenu(R.menu.menu_tasks_list);
-        searchView = (SearchView) MenuItemCompat.getActionView(b.tasksListToolbar.getMenu().findItem(R.id.action_search));
+        MenuItem searchItem = b.tasksListToolbar.getMenu().findItem(R.id.action_search);
+        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
 
         TasksAdapterTouchCallback touchCallback = new TasksAdapterTouchCallback(adapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(touchCallback);
@@ -76,7 +79,7 @@ public class TasksListFragment extends BaseFragment {
         super.onResume();
         addSubscription(RxSearchView.queryTextChanges(searchView)
                 .map(CharSequence::toString)
-                .debounce(100L, TimeUnit.MILLISECONDS)
+                //.debounce(100L, TimeUnit.MILLISECONDS)
                 .subscribe(text -> Pipe.sendEvent(new SearchEvent(text))));
 
         addSubscription(RxView.clicks(b.fab).subscribe(o -> Pipe.sendEvent(new NewTaskEvent())));

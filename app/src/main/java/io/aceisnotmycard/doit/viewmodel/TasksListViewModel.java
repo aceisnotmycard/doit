@@ -17,12 +17,16 @@ public class TasksListViewModel extends BaseViewModel {
 
     private ObservableArrayList<Task> items;
     private Context context;
+    private String searchTerm;
 
     public TasksListViewModel(Context context) {
         super();
         this.context = context;
         items = new ObservableArrayList<>();
-        addSubscription(getTasks(""));
+
+        if (searchTerm == null) {
+            getTasks("");
+        }
 
         addSubscription(Pipe.recvEvent(TaskRemovedEvent.class, AndroidSchedulers.mainThread(), Schedulers.io(),
                 taskRemovedEvent -> TaskDao.getDao(context).delete(taskRemovedEvent.getData())));
@@ -38,6 +42,7 @@ public class TasksListViewModel extends BaseViewModel {
         return TaskDao.getDao(context).searchFor(term)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(tasks1 -> searchTerm = term)
                 .subscribe(tasks -> {
                     items.clear();
                     items.addAll(tasks);
@@ -48,5 +53,10 @@ public class TasksListViewModel extends BaseViewModel {
         return items;
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        context = null;
+    }
 }
 
