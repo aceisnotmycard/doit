@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 import io.aceisnotmycard.doit.R;
 import io.aceisnotmycard.doit.adapter.TasksAdapter;
 import io.aceisnotmycard.doit.adapter.TasksAdapterTouchCallback;
-import io.aceisnotmycard.doit.databinding.TasksListFragmentBinding;
+import io.aceisnotmycard.doit.databinding.FragmentTasksListBinding;
 import io.aceisnotmycard.doit.pipeline.Pipe;
 import io.aceisnotmycard.doit.pipeline.events.NewTaskEvent;
 import io.aceisnotmycard.doit.pipeline.events.SearchEvent;
@@ -30,7 +30,7 @@ import io.aceisnotmycard.doit.viewmodel.TasksListViewModel;
 
 public class TasksListFragment extends BaseFragment {
 
-    private TasksListFragmentBinding b;
+    private FragmentTasksListBinding b;
     private TasksListViewModel viewModel;
     private TasksAdapter adapter;
 
@@ -51,7 +51,7 @@ public class TasksListFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        b = TasksListFragmentBinding.inflate(inflater);
+        b = FragmentTasksListBinding.inflate(inflater);
         return b.getRoot();
     }
 

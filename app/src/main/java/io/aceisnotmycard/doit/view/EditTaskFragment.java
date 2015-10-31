@@ -2,11 +2,13 @@ package io.aceisnotmycard.doit.view;
 
 
 import android.animation.Animator;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -60,14 +62,13 @@ public class EditTaskFragment extends BaseFragment {
         return new EditTaskFragment();
     }
 
-    public EditTaskFragment() {
-    }
-
+    public EditTaskFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -86,13 +87,32 @@ public class EditTaskFragment extends BaseFragment {
         b.setViewModel(viewModel);
         b.editTaskLayout.setBackgroundColor(ContextCompat.getColor(getActivity(),
                 viewModel.getImportant() ? R.color.colorAccent : R.color.colorPrimary));
-        ((AppCompatActivity) getActivity()).setSupportActionBar(b.editTaskToolbar);
 
+        b.editTaskToolbar.setTitle("");
+
+        ((AppCompatActivity) getActivity()).setSupportActionBar(b.editTaskToolbar);
         actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         b.editTaskToolbar.setNavigationOnClickListener(v -> Pipe.sendEvent(new TaskEditCompleteEvent()));
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_edit_task, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_share:
+                shareTask();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -153,7 +173,8 @@ public class EditTaskFragment extends BaseFragment {
         anim.start();
         anim.addListener(new Animator.AnimatorListener() {
             @Override
-            public void onAnimationStart(Animator animation) {}
+            public void onAnimationStart(Animator animation) {
+            }
 
             @Override
             public void onAnimationEnd(Animator animation) {
@@ -162,10 +183,21 @@ public class EditTaskFragment extends BaseFragment {
             }
 
             @Override
-            public void onAnimationCancel(Animator animation) {}
+            public void onAnimationCancel(Animator animation) {
+            }
 
             @Override
-            public void onAnimationRepeat(Animator animation) {}
+            public void onAnimationRepeat(Animator animation) {
+            }
         });
+    }
+
+    private void shareTask() {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TITLE, b.editTaskTitle.getText().toString());
+        sendIntent.putExtra(Intent.EXTRA_TEXT, b.editTaskText.getText().toString());
+        sendIntent.setType("text/plain");
+        getActivity().startActivity(Intent.createChooser(sendIntent, getActivity().getResources().getText(R.string.action_share)));
     }
 }
