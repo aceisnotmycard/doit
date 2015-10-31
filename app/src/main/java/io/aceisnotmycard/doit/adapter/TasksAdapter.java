@@ -108,9 +108,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
         public ViewHolder(TaskItemBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
-            itemView.setOnClickListener(v ->
-                Pipe.sendEvent(new TasksListClickEvent(binding.getViewModel().getTask()))
-            );
+            itemView.setOnClickListener(v -> Pipe.sendEvent(new TasksListClickEvent(binding.getViewModel().getTask())));
         }
 
         public TaskItemBinding getBinding() {

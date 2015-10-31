@@ -40,18 +40,12 @@ public class TaskDao {
         return DAO;
     }
 
-    public Observable<List<Task>> getTasks(){
-        return db.createQuery(DoItContract.Task.TABLE_NAME,
-                "SELECT * FROM " + DoItContract.Task.TABLE_NAME)
-                .mapToList(MAPPER)
-                .take(1);
-    }
-
     // todo: refactor
     public Observable<List<Task>> searchFor(String term) {
         return db.createQuery(DoItContract.Task.TABLE_NAME,
                 "SELECT * FROM " + DoItContract.Task.TABLE_NAME
-                        + " WHERE " + DoItContract.Task.COL_TITLE + " LIKE " + "'%" + term + "%'")
+                        + " WHERE " + DoItContract.Task.COL_TITLE + " LIKE " + "'%" + term + "%'"
+                        + " OR " + DoItContract.Task.COL_TEXT + " LIKE " + "'%" + term + "%'")
                 .mapToList(MAPPER)
                 .take(1);
     }
