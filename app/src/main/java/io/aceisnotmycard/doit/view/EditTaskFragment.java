@@ -84,7 +84,8 @@ public class EditTaskFragment extends BaseFragment {
         viewModel = new EditTaskViewModel(args != null ? args.getParcelable(ARG_TASK) : null,
                 getActivity());
         b.setViewModel(viewModel);
-
+        b.editTaskLayout.setBackgroundColor(ContextCompat.getColor(getActivity(),
+                viewModel.getImportant() ? R.color.colorAccent : R.color.colorPrimary));
         ((AppCompatActivity) getActivity()).setSupportActionBar(b.editTaskToolbar);
 
         actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
@@ -112,10 +113,7 @@ public class EditTaskFragment extends BaseFragment {
         addSubscription(rx.Observable.combineLatest(titleObs, textObs, importantObs, (title, text, important) ->
                 new TaskUpdatedEvent(new Task(title, text, important)))
                 .debounce(250L, TimeUnit.MILLISECONDS)
-                .subscribe(taskUpdatedEvent -> {
-                    Log.i(TAG, String.valueOf(taskUpdatedEvent.getData().isImportant()));
-                    Pipe.sendEvent(taskUpdatedEvent);
-                }));
+                .subscribe(Pipe::sendEvent));
     }
 
     private void setImportantDesign(boolean important) {
@@ -144,7 +142,7 @@ public class EditTaskFragment extends BaseFragment {
 
         Animator anim = ViewAnimationUtils.createCircularReveal(important ? b.editTaskBackImportant : b.editTaskBackUsual,
                 cx, cy, 0, radius);
-        Log.e("ANIM", "CX:" + cx + " CY: " + cy + " radius: " + radius);
+
         if (important) {
             b.editTaskBackImportant.setVisibility(View.VISIBLE);
             b.editTaskBackUsual.setVisibility(View.INVISIBLE);
@@ -153,5 +151,21 @@ public class EditTaskFragment extends BaseFragment {
             b.editTaskBackUsual.setVisibility(View.VISIBLE);
         }
         anim.start();
+        anim.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {}
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                b.editTaskLayout.setBackgroundColor(ContextCompat.getColor(getActivity(),
+                        important ? R.color.colorAccent : R.color.colorPrimary));
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {}
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {}
+        });
     }
 }

@@ -13,9 +13,10 @@ import rx.subscriptions.CompositeSubscription;
 public abstract class BaseFragment extends Fragment {
     private CompositeSubscription subscriptions;
 
+
     @Override
-    public void onViewStateRestored(Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
+    public void onResume() {
+        super.onResume();
         subscriptions = new CompositeSubscription();
     }
 

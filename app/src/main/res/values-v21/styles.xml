@@ -4,8 +4,4 @@
         <item name="windowNoTitle">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
-
-    <style name="AppTheme" parent="AppTheme.Base">
-        <item name="android:statusBarColor">@color/statusBarColor</item>
-    </style>
 </resources>

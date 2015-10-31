@@ -1,6 +1,7 @@
 package io.aceisnotmycard.doit;
 
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         getFragmentManager()
                 .beginTransaction()
                 .replace(R.id.container, fragment)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .commit();
     }
 

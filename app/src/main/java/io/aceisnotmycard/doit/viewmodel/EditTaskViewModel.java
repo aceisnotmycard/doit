@@ -53,7 +53,6 @@ public class EditTaskViewModel extends BaseViewModel {
             task.setText(updater.getText());
             task.setTitle(updater.getTitle());
             task.setImportant(updater.isImportant());
-            Log.i("Updating", "Position: " + task.getPosition() + " title: " + task.getTitle());
             if (!TaskDao.getDao(context).update(task)) {
                 Log.d(TAG, "Task is not updated for some reason");
             }

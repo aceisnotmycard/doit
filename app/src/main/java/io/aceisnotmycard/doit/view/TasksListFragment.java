@@ -79,7 +79,6 @@ public class TasksListFragment extends BaseFragment {
         super.onResume();
         addSubscription(RxSearchView.queryTextChanges(searchView)
                 .map(CharSequence::toString)
-                //.debounce(100L, TimeUnit.MILLISECONDS)
                 .subscribe(text -> Pipe.sendEvent(new SearchEvent(text))));
 
         addSubscription(RxView.clicks(b.fab).subscribe(o -> Pipe.sendEvent(new NewTaskEvent())));
