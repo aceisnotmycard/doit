@@ -2,6 +2,7 @@ package io.aceisnotmycard.doit.viewmodel;
 
 import android.content.Context;
 import android.databinding.ObservableArrayList;
+import android.util.Log;
 
 import io.aceisnotmycard.doit.db.TaskDao;
 import io.aceisnotmycard.doit.model.Task;
@@ -16,9 +17,12 @@ import rx.schedulers.Schedulers;
 
 public class TasksListViewModel extends BaseViewModel {
 
+    public static final String TAG = TasksListViewModel.class.getName();
+
     private ObservableArrayList<Task> items;
     private Context context;
     private String searchTerm;
+    private Task lastRemovedItem;
 
     public TasksListViewModel(Context context) {
         super();
@@ -30,16 +34,21 @@ public class TasksListViewModel extends BaseViewModel {
         }
 
         addSubscription(Pipe.recvEvent(TaskRemovedEvent.class, AndroidSchedulers.mainThread(), Schedulers.io(),
-                taskRemovedEvent -> TaskDao.getDao(context).delete(taskRemovedEvent.getData())));
+                taskRemovedEvent -> {
+                    lastRemovedItem = taskRemovedEvent.getData();
+                    TaskDao.getDao(context).delete(lastRemovedItem);
+                }));
 
         addSubscription(Pipe.recvEvent(TaskUpdatedEvent.class, AndroidSchedulers.mainThread(), Schedulers.io(),
                 taskUpdatedEvent -> TaskDao.getDao(context).update(taskUpdatedEvent.getData())));
 
-        addSubscription(Pipe.recvEvent(TaskRestoredEvent.class, AndroidSchedulers.mainThread(), Schedulers.io(),
-                taskRestoredEvent -> {
-                    Task t = taskRestoredEvent.getData();
-                    TaskDao.getDao(context).insert(t.getPosition(), t);
-                    items.add(t.getPosition(), t);
+        addSubscription(Pipe.recvEvent(TaskRestoredEvent.class, taskRestoredEvent -> {
+                    if (lastRemovedItem != null) {
+                        TaskDao.getDao(context).insert(lastRemovedItem.getPosition(), lastRemovedItem);
+                        items.add(taskRestoredEvent.getData(), lastRemovedItem);
+                    } else {
+                        Log.e(TAG, "Tried to restore null item");
+                    }
                 }));
 
         addSubscription(Pipe.recvEvent(SearchEvent.class, AndroidSchedulers.mainThread(), Schedulers.io(),

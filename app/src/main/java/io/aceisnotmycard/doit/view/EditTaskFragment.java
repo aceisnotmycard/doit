@@ -2,6 +2,7 @@ package io.aceisnotmycard.doit.view;
 
 
 import android.animation.Animator;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -37,6 +38,8 @@ import io.aceisnotmycard.doit.pipeline.events.SearchEvent;
 import io.aceisnotmycard.doit.pipeline.events.TaskEditCompleteEvent;
 import io.aceisnotmycard.doit.pipeline.events.TaskUpdatedEvent;
 import io.aceisnotmycard.doit.viewmodel.EditTaskViewModel;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -51,6 +54,10 @@ public class EditTaskFragment extends BaseFragment {
     private EditTaskViewModel viewModel;
     private FragmentEditTaskBinding b;
     private android.support.v7.app.ActionBar actionBar;
+    private rx.Observable<String> titleObs;
+    private rx.Observable<Boolean> importantObs;
+    private rx.Observable<String> textObs;
+
 
     public static EditTaskFragment newInstance(Task t) {
         Bundle args = new Bundle();
@@ -64,7 +71,8 @@ public class EditTaskFragment extends BaseFragment {
         return new EditTaskFragment();
     }
 
-    public EditTaskFragment() {}
+    public EditTaskFragment() {
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,18 +85,25 @@ public class EditTaskFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         b = FragmentEditTaskBinding.inflate(inflater);
+
+        Bundle args = getArguments();
+        viewModel = new EditTaskViewModel(args != null ? args.getParcelable(ARG_TASK) : null,
+                getActivity());
+        b.setViewModel(viewModel);
+        setBackground(viewModel.getImportant());
+        if (viewModel.getImportant()) {
+            b.editTaskBackImportant.setVisibility(View.VISIBLE);
+            b.editTaskBackUsual.setVisibility(View.INVISIBLE);
+        } else {
+            b.editTaskBackImportant.setVisibility(View.INVISIBLE);
+            b.editTaskBackUsual.setVisibility(View.VISIBLE);
+        }
         return b.getRoot();
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Bundle args = getArguments();
-        viewModel = new EditTaskViewModel(args != null ? args.getParcelable(ARG_TASK) : null,
-                getActivity());
-        b.setViewModel(viewModel);
-        b.editTaskLayout.setBackgroundColor(ContextCompat.getColor(getActivity(),
-                viewModel.getImportant() ? R.color.colorAccent : R.color.colorPrimary));
 
         b.editTaskToolbar.setTitle("");
 
@@ -97,6 +112,7 @@ public class EditTaskFragment extends BaseFragment {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
         b.editTaskToolbar.setNavigationOnClickListener(v -> {
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(b.getRoot().getWindowToken(), 0);
@@ -121,19 +137,19 @@ public class EditTaskFragment extends BaseFragment {
         }
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
 
-        rx.Observable<String> titleObs = RxTextView.textChanges(b.editTaskTitle)
+        titleObs = RxTextView.textChanges(b.editTaskTitle)
                 .map(CharSequence::toString)
                 .filter(s -> !s.isEmpty());
-        rx.Observable<String> textObs = RxTextView.textChanges(b.editTaskText)
+        textObs = RxTextView.textChanges(b.editTaskText)
                 .map(CharSequence::toString);
 
-        rx.Observable<Boolean> importantObs = RxView.clicks(b.editTaskImportant)
+        importantObs = RxView.clicks(b.editTaskImportant)
                 .map(viewClickEvent -> !viewModel.getImportant())
-                .startWith(viewModel.getImportant())
                 .doOnNext(this::setImportantDesign);
 
         addSubscription(rx.Observable.combineLatest(titleObs, textObs, importantObs, (title, text, important) ->
@@ -146,8 +162,7 @@ public class EditTaskFragment extends BaseFragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             enterReveal(important);
         } else {
-            b.editTaskLayout.setBackgroundColor(ContextCompat.getColor(getActivity(),
-                    important ? R.color.colorAccent : R.color.colorPrimary));
+            setBackground(important);
         }
 
         b.editTaskImportant.setImageDrawable(ContextCompat.getDrawable(getActivity(),
@@ -160,6 +175,7 @@ public class EditTaskFragment extends BaseFragment {
         viewModel.onPause();
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void enterReveal(boolean important) {
         int cx = (int) b.editTaskImportant.getX() + (b.editTaskImportant.getMeasuredWidth() / 2);
         int cy = (int) b.editTaskImportant.getY() + (b.editTaskImportant.getMeasuredHeight() / 2);
@@ -184,8 +200,7 @@ public class EditTaskFragment extends BaseFragment {
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                b.editTaskLayout.setBackgroundColor(ContextCompat.getColor(getActivity(),
-                        important ? R.color.colorAccent : R.color.colorPrimary));
+                setBackground(important);
             }
 
             @Override
@@ -196,6 +211,11 @@ public class EditTaskFragment extends BaseFragment {
             public void onAnimationRepeat(Animator animation) {
             }
         });
+    }
+
+    private void setBackground(boolean important) {
+        b.editTaskLayout.setBackgroundColor(ContextCompat.getColor(getActivity(),
+                important ? R.color.colorAccent : R.color.colorPrimary));
     }
 
     private void shareTask() {

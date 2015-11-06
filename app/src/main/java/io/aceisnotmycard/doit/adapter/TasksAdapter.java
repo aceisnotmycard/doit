@@ -76,7 +76,8 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
 
     @Override
     public void onItemSwiped(RecyclerView.ViewHolder viewHolder) {
-        Pipe.sendEvent(new TaskRemovedEvent(items.get(viewHolder.getAdapterPosition())));
+        Pipe.sendEvent(new TaskRemovedEvent(items.get(viewHolder.getAdapterPosition()),
+                viewHolder.getAdapterPosition()));
         items.remove(viewHolder.getAdapterPosition());
     }
 

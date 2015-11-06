@@ -40,21 +40,17 @@ public class EditTaskViewModel extends BaseViewModel {
                 taskUpdatedEvent -> createOrUpdate(taskUpdatedEvent.getData())));
     }
 
-    // TODO: refactor
     private void createOrUpdate(Task updater) {
+        task.setImportant(updater.isImportant());
+        task.setText(updater.getText());
+        task.setTitle(updater.getTitle());
         if (isNew) {
             isNew = false;
             int id = TaskDao.getDao(context).insert(updater);
-            task.setImportant(updater.isImportant());
-            task.setText(updater.getText());
-            task.setTitle(updater.getTitle());
             task.setPosition(id);
         } else {
-            task.setText(updater.getText());
-            task.setTitle(updater.getTitle());
-            task.setImportant(updater.isImportant());
             if (!TaskDao.getDao(context).update(task)) {
-                Log.d(TAG, "Task is not updated for some reason");
+                Log.e(TAG, "Task is not updated for some reason");
             }
         }
     }

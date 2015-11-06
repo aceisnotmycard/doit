@@ -19,7 +19,6 @@ import io.aceisnotmycard.doit.R;
 import io.aceisnotmycard.doit.adapter.TasksAdapter;
 import io.aceisnotmycard.doit.adapter.TasksAdapterTouchCallback;
 import io.aceisnotmycard.doit.databinding.FragmentTasksListBinding;
-import io.aceisnotmycard.doit.model.Task;
 import io.aceisnotmycard.doit.pipeline.Pipe;
 import io.aceisnotmycard.doit.pipeline.events.NewTaskEvent;
 import io.aceisnotmycard.doit.pipeline.events.SearchEvent;
@@ -82,12 +81,11 @@ public class TasksListFragment extends BaseFragment {
 
         addSubscription(RxView.clicks(b.fab).subscribe(o -> Pipe.sendEvent(new NewTaskEvent())));
 
-        addSubscription(Pipe.recvEvent(TaskRemovedEvent.class, taskRemovedEvent -> {
-            Task tmp = taskRemovedEvent.getData();
+        addSubscription(Pipe.recvEvent(TaskRemovedEvent.class, taskRemovedEvent ->
             Snackbar.make(b.getRoot(), "Task removed", Snackbar.LENGTH_LONG)
-                    .setAction("UNDO", v -> Pipe.sendEvent(new TaskRestoredEvent(tmp)))
-                    .show();
-        }));
+                    .setAction("UNDO", v -> Pipe.sendEvent(new TaskRestoredEvent(taskRemovedEvent.getAdapterPosition())))
+                    .show()
+        ));
     }
 
     @Override

@@ -7,14 +7,14 @@ import io.aceisnotmycard.doit.pipeline.AbstactEvent;
  * Created by sergey on 06/11/15.
  */
 public class TaskRestoredEvent extends AbstactEvent {
-    private Task task;
+    private int position;
 
-    public TaskRestoredEvent(Task task) {
-        this.task = task;
+    public TaskRestoredEvent(int position) {
+        this.position = position;
     }
 
     @Override
-    public Task getData() {
-        return task;
+    public Integer getData() {
+        return position;
     }
 }

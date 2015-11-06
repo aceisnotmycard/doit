@@ -9,13 +9,19 @@ import io.aceisnotmycard.doit.pipeline.AbstactEvent;
 public class TaskRemovedEvent extends AbstactEvent {
 
     private Task task;
+    private int adapterPosition;
 
-    public TaskRemovedEvent(Task task) {
+    public TaskRemovedEvent(Task task, int adapterPosition) {
         this.task = task;
+        this.adapterPosition = adapterPosition;
     }
 
     @Override
     public Task getData() {
         return task;
+    }
+
+    public int getAdapterPosition() {
+        return adapterPosition;
     }
 }
