@@ -8,6 +8,7 @@ import io.aceisnotmycard.doit.model.Task;
 import io.aceisnotmycard.doit.pipeline.Pipe;
 import io.aceisnotmycard.doit.pipeline.events.SearchEvent;
 import io.aceisnotmycard.doit.pipeline.events.TaskRemovedEvent;
+import io.aceisnotmycard.doit.pipeline.events.TaskRestoredEvent;
 import io.aceisnotmycard.doit.pipeline.events.TaskUpdatedEvent;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -33,6 +34,13 @@ public class TasksListViewModel extends BaseViewModel {
 
         addSubscription(Pipe.recvEvent(TaskUpdatedEvent.class, AndroidSchedulers.mainThread(), Schedulers.io(),
                 taskUpdatedEvent -> TaskDao.getDao(context).update(taskUpdatedEvent.getData())));
+
+        addSubscription(Pipe.recvEvent(TaskRestoredEvent.class, AndroidSchedulers.mainThread(), Schedulers.io(),
+                taskRestoredEvent -> {
+                    Task t = taskRestoredEvent.getData();
+                    TaskDao.getDao(context).insert(t.getPosition(), t);
+                    items.add(t.getPosition(), t);
+                }));
 
         addSubscription(Pipe.recvEvent(SearchEvent.class, AndroidSchedulers.mainThread(), Schedulers.io(),
                 searchEvent -> getTasks(searchEvent.getData())));

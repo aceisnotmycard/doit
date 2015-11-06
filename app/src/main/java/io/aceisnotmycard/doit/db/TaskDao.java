@@ -66,11 +66,12 @@ public class TaskDao {
         return (int) db.insert(DoItContract.Task.TABLE_NAME, cv);
     }
 
-    public int insert(String title, String text) {
+    public int insert(int pos, Task task) {
         ContentValues cv = new Builder()
-                .text(text)
-                .title(title)
-                .important(false)
+                .text(task.getText())
+                .title(task.getTitle())
+                .important(task.isImportant())
+                .position(pos)
                 .build();
         return (int) db.insert(DoItContract.Task.TABLE_NAME, cv);
     }
