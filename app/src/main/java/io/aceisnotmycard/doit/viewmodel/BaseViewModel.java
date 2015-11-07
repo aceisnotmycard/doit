@@ -9,12 +9,14 @@ public abstract class BaseViewModel extends BaseObservable {
 
     private CompositeSubscription subscriptions;
 
-    BaseViewModel() {
-        subscriptions = new CompositeSubscription();
-    }
+    BaseViewModel() {}
 
     void addSubscription(Subscription s) {
         subscriptions.add(s);
+    }
+
+    public void onResume() {
+        subscriptions = new CompositeSubscription();
     }
 
     public void onPause() {

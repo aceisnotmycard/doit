@@ -7,6 +7,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,53 +29,51 @@ import io.aceisnotmycard.doit.viewmodel.TasksListViewModel;
 
 public class TasksListFragment extends BaseFragment {
 
+    public static final String TAG = TasksListFragment.class.getName();
+
     private FragmentTasksListBinding b;
     private TasksListViewModel viewModel;
     private TasksAdapter adapter;
 
     private SearchView searchView;
 
-    public static TasksListFragment newInstance() {
-        return new TasksListFragment();
-    }
+    public static TasksListFragment newInstance() { return new TasksListFragment(); }
 
     public TasksListFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Log.d(TAG, "onCreate()");
         setRetainInstance(true);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        //Log.d(TAG, "onCreateView()");
         b = FragmentTasksListBinding.inflate(inflater);
+        viewModel = new TasksListViewModel(getActivity());
+        b.setViewModel(viewModel);
         return b.getRoot();
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        viewModel = new TasksListViewModel(getActivity());
-        adapter = new TasksAdapter(viewModel.getItems());
-        b.setViewModel(viewModel);
-        b.tasksListView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        b.tasksListView.setAdapter(adapter);
-
+        //Log.d(TAG, "onViewCreated()");
+        setupAdapter();
         b.tasksListToolbar.inflateMenu(R.menu.menu_tasks_list);
         MenuItem searchItem = b.tasksListToolbar.getMenu().findItem(R.id.action_search);
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-
-
-        TasksAdapterTouchCallback touchCallback = new TasksAdapterTouchCallback(adapter);
-        ItemTouchHelper touchHelper = new ItemTouchHelper(touchCallback);
-        touchHelper.attachToRecyclerView(b.tasksListView);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        //Log.d(TAG, "onResume()");
+        viewModel.onResume();
+
         addSubscription(RxSearchView.queryTextChanges(searchView)
                 .map(CharSequence::toString)
                 .subscribe(text -> Pipe.sendEvent(new SearchEvent(text))));
@@ -82,8 +81,11 @@ public class TasksListFragment extends BaseFragment {
         addSubscription(RxView.clicks(b.fab).subscribe(o -> Pipe.sendEvent(new NewTaskEvent())));
 
         addSubscription(Pipe.recvEvent(TaskRemovedEvent.class, taskRemovedEvent ->
-            Snackbar.make(b.getRoot(), "Task removed", Snackbar.LENGTH_LONG)
-                    .setAction("UNDO", v -> Pipe.sendEvent(new TaskRestoredEvent(taskRemovedEvent.getAdapterPosition())))
+            Snackbar.make(b.getRoot(), R.string.task_removed, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.undo_action, v -> {
+                        //Log.d(TAG, "Sending " + TaskRestoredEvent.class);
+                        Pipe.sendEvent(new TaskRestoredEvent(taskRemovedEvent.getAdapterPosition()));
+                    })
                     .show()
         ));
     }
@@ -91,6 +93,16 @@ public class TasksListFragment extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
+        //Log.d(TAG, "onPause()");
         viewModel.onPause();
+    }
+
+    private void setupAdapter() {
+        adapter = new TasksAdapter(viewModel.getItems());
+        b.tasksListView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        b.tasksListView.setAdapter(adapter);
+        TasksAdapterTouchCallback touchCallback = new TasksAdapterTouchCallback(adapter);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(touchCallback);
+        touchHelper.attachToRecyclerView(b.tasksListView);
     }
 }

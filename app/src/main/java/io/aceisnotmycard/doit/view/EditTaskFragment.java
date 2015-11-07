@@ -119,16 +119,18 @@ public class EditTaskFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-
+        viewModel.onResume();
         rx.Observable<String> titleObs = RxTextView.textChanges(b.editTaskTitle)
                 .map(CharSequence::toString)
-                .filter(s -> !s.isEmpty());
+                .startWith("");
         rx.Observable<String> textObs = RxTextView.textChanges(b.editTaskText)
-                .map(CharSequence::toString);
+                .map(CharSequence::toString)
+                .startWith("");
 
         rx.Observable<Boolean> importantObs = RxView.clicks(b.editTaskImportant)
                 .map(viewClickEvent -> !viewModel.getImportant())
-                .doOnNext(this::setImportantDesign);
+                .doOnNext(this::setImportantDesign)
+                .startWith(viewModel.getImportant());
 
         addSubscription(rx.Observable.combineLatest(titleObs, textObs, importantObs, (title, text, important) ->
                 new TaskUpdatedEvent(new Task(title, text, important)))

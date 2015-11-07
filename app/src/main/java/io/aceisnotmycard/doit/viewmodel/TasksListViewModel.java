@@ -32,7 +32,11 @@ public class TasksListViewModel extends BaseViewModel {
         if (searchTerm == null) {
             getTasks("");
         }
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
         addSubscription(Pipe.recvEvent(TaskRemovedEvent.class, AndroidSchedulers.mainThread(), Schedulers.io(),
                 taskRemovedEvent -> {
                     lastRemovedItem = taskRemovedEvent.getData();
@@ -43,16 +47,27 @@ public class TasksListViewModel extends BaseViewModel {
                 taskUpdatedEvent -> TaskDao.getDao(context).update(taskUpdatedEvent.getData())));
 
         addSubscription(Pipe.recvEvent(TaskRestoredEvent.class, taskRestoredEvent -> {
-                    if (lastRemovedItem != null) {
-                        TaskDao.getDao(context).insert(lastRemovedItem.getPosition(), lastRemovedItem);
-                        items.add(taskRestoredEvent.getData(), lastRemovedItem);
-                    } else {
-                        Log.e(TAG, "Tried to restore null item");
-                    }
-                }));
+            //Log.d(TAG, "Received " + taskRestoredEvent.getClass());
+            if (lastRemovedItem != null) {
+                TaskDao.getDao(context).insert(lastRemovedItem.getPosition(), lastRemovedItem);
+                items.add(taskRestoredEvent.getData(), lastRemovedItem);
+            } else {
+                Log.e(TAG, "Tried to restore null item");
+            }
+        }));
 
         addSubscription(Pipe.recvEvent(SearchEvent.class, AndroidSchedulers.mainThread(), Schedulers.io(),
                 searchEvent -> getTasks(searchEvent.getData())));
+    }
+
+    public ObservableArrayList<Task> getItems() {
+        return items;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //context = null;
     }
 
     private Subscription getTasks(String term) {
@@ -64,16 +79,6 @@ public class TasksListViewModel extends BaseViewModel {
                     items.clear();
                     items.addAll(tasks);
                 });
-    }
-
-    public ObservableArrayList<Task> getItems() {
-        return items;
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        context = null;
     }
 }
 

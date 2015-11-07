@@ -27,7 +27,6 @@ public class EditTaskViewModel extends BaseViewModel {
     private boolean isNew;
 
     public EditTaskViewModel(Task task, Context context) {
-        super();
         if (task != null) {
             this.task = task;
             isNew = false;
@@ -36,21 +35,29 @@ public class EditTaskViewModel extends BaseViewModel {
             isNew = true;
         }
         this.context = context;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         addSubscription(Pipe.recvEvent(TaskUpdatedEvent.class, AndroidSchedulers.mainThread(), Schedulers.io(),
                 taskUpdatedEvent -> createOrUpdate(taskUpdatedEvent.getData())));
     }
 
     private void createOrUpdate(Task updater) {
+        Log.d(TAG, "createOrUpdate()");
         task.setImportant(updater.isImportant());
         task.setText(updater.getText());
         task.setTitle(updater.getTitle());
-        if (isNew) {
-            isNew = false;
-            int id = TaskDao.getDao(context).insert(updater);
-            task.setPosition(id);
-        } else {
-            if (!TaskDao.getDao(context).update(task)) {
-                Log.e(TAG, "Task is not updated for some reason");
+        if (!task.getTitle().isEmpty()) {
+            if (isNew) {
+                isNew = false;
+                int id = TaskDao.getDao(context).insert(updater);
+                task.setPosition(id);
+            } else {
+                if (!TaskDao.getDao(context).update(task)) {
+                    Log.e(TAG, "Task is not updated for some reason");
+                }
             }
         }
     }

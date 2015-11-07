@@ -7,4 +7,6 @@
     <string name="text_hint">Text</string>
     <string name="search">Search</string>
     <string name="action_share">Share</string>
+    <string name="undo_action">UNDO</string>
+    <string name="task_removed">Task removed</string>
 </resources>

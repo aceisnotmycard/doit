@@ -1,11 +1,15 @@
 package io.aceisnotmycard.doit.pipeline;
 
+import android.util.Log;
+
 import rx.Scheduler;
 import rx.Subscription;
 import rx.functions.Action1;
 import rx.subjects.PublishSubject;
 
 public class Pipe {
+
+    public static final String TAG = Pipe.class.getName();
 
     private static final PublishSubject<AbstactEvent> eventSubject = PublishSubject.create();
 
