@@ -10,8 +10,6 @@ import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,10 +20,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
 import com.jakewharton.rxbinding.view.RxView;
-import com.jakewharton.rxbinding.widget.RxCompoundButton;
-import com.jakewharton.rxbinding.widget.RxSearchView;
 import com.jakewharton.rxbinding.widget.RxTextView;
-import com.jakewharton.rxbinding.widget.RxToolbar;
 
 import java.util.concurrent.TimeUnit;
 
@@ -33,17 +28,10 @@ import io.aceisnotmycard.doit.R;
 import io.aceisnotmycard.doit.databinding.FragmentEditTaskBinding;
 import io.aceisnotmycard.doit.model.Task;
 import io.aceisnotmycard.doit.pipeline.Pipe;
-import io.aceisnotmycard.doit.pipeline.events.NewTaskEvent;
-import io.aceisnotmycard.doit.pipeline.events.SearchEvent;
 import io.aceisnotmycard.doit.pipeline.events.TaskEditCompleteEvent;
 import io.aceisnotmycard.doit.pipeline.events.TaskUpdatedEvent;
 import io.aceisnotmycard.doit.viewmodel.EditTaskViewModel;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class EditTaskFragment extends BaseFragment {
 
     private static final String TAG = EditTaskFragment.class.getSimpleName();
@@ -53,10 +41,6 @@ public class EditTaskFragment extends BaseFragment {
 
     private EditTaskViewModel viewModel;
     private FragmentEditTaskBinding b;
-    private android.support.v7.app.ActionBar actionBar;
-    private rx.Observable<String> titleObs;
-    private rx.Observable<Boolean> importantObs;
-    private rx.Observable<String> textObs;
 
 
     public static EditTaskFragment newInstance(Task t) {
@@ -90,14 +74,8 @@ public class EditTaskFragment extends BaseFragment {
         viewModel = new EditTaskViewModel(args != null ? args.getParcelable(ARG_TASK) : null,
                 getActivity());
         b.setViewModel(viewModel);
-        setBackground(viewModel.getImportant());
-        if (viewModel.getImportant()) {
-            b.editTaskBackImportant.setVisibility(View.VISIBLE);
-            b.editTaskBackUsual.setVisibility(View.INVISIBLE);
-        } else {
-            b.editTaskBackImportant.setVisibility(View.INVISIBLE);
-            b.editTaskBackUsual.setVisibility(View.VISIBLE);
-        }
+        setBackgroundColor(viewModel.getImportant());
+        setBackgroundView(viewModel.getImportant());
         return b.getRoot();
     }
 
@@ -108,7 +86,7 @@ public class EditTaskFragment extends BaseFragment {
         b.editTaskToolbar.setTitle("");
 
         ((AppCompatActivity) getActivity()).setSupportActionBar(b.editTaskToolbar);
-        actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        android.support.v7.app.ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
@@ -142,13 +120,13 @@ public class EditTaskFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
 
-        titleObs = RxTextView.textChanges(b.editTaskTitle)
+        rx.Observable<String> titleObs = RxTextView.textChanges(b.editTaskTitle)
                 .map(CharSequence::toString)
                 .filter(s -> !s.isEmpty());
-        textObs = RxTextView.textChanges(b.editTaskText)
+        rx.Observable<String> textObs = RxTextView.textChanges(b.editTaskText)
                 .map(CharSequence::toString);
 
-        importantObs = RxView.clicks(b.editTaskImportant)
+        rx.Observable<Boolean> importantObs = RxView.clicks(b.editTaskImportant)
                 .map(viewClickEvent -> !viewModel.getImportant())
                 .doOnNext(this::setImportantDesign);
 
@@ -162,7 +140,7 @@ public class EditTaskFragment extends BaseFragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             enterReveal(important);
         } else {
-            setBackground(important);
+            setBackgroundColor(important);
         }
 
         b.editTaskImportant.setImageDrawable(ContextCompat.getDrawable(getActivity(),
@@ -185,13 +163,7 @@ public class EditTaskFragment extends BaseFragment {
         Animator anim = ViewAnimationUtils.createCircularReveal(important ? b.editTaskBackImportant : b.editTaskBackUsual,
                 cx, cy, 0, radius);
 
-        if (important) {
-            b.editTaskBackImportant.setVisibility(View.VISIBLE);
-            b.editTaskBackUsual.setVisibility(View.INVISIBLE);
-        } else {
-            b.editTaskBackImportant.setVisibility(View.INVISIBLE);
-            b.editTaskBackUsual.setVisibility(View.VISIBLE);
-        }
+        setBackgroundView(important);
         anim.start();
         anim.addListener(new Animator.AnimatorListener() {
             @Override
@@ -200,7 +172,7 @@ public class EditTaskFragment extends BaseFragment {
 
             @Override
             public void onAnimationEnd(Animator animation) {
-                setBackground(important);
+                setBackgroundColor(important);
             }
 
             @Override
@@ -213,9 +185,19 @@ public class EditTaskFragment extends BaseFragment {
         });
     }
 
-    private void setBackground(boolean important) {
+    private void setBackgroundColor(boolean important) {
         b.editTaskLayout.setBackgroundColor(ContextCompat.getColor(getActivity(),
                 important ? R.color.colorAccent : R.color.colorPrimary));
+    }
+
+    private void setBackgroundView(boolean important) {
+        if (important) {
+            b.editTaskBackImportant.setVisibility(View.VISIBLE);
+            b.editTaskBackUsual.setVisibility(View.INVISIBLE);
+        } else {
+            b.editTaskBackImportant.setVisibility(View.INVISIBLE);
+            b.editTaskBackUsual.setVisibility(View.VISIBLE);
+        }
     }
 
     private void shareTask() {
