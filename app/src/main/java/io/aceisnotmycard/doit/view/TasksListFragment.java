@@ -51,7 +51,6 @@ public class TasksListFragment extends BaseFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        //Log.d(TAG, "onCreateView()");
         b = FragmentTasksListBinding.inflate(inflater);
         viewModel = new TasksListViewModel(getActivity());
         b.setViewModel(viewModel);
@@ -61,9 +60,9 @@ public class TasksListFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        //Log.d(TAG, "onViewCreated()");
         setupAdapter();
         b.tasksListToolbar.inflateMenu(R.menu.menu_tasks_list);
+        b.tasksListToolbar.setTitle(R.string.app_name);
         MenuItem searchItem = b.tasksListToolbar.getMenu().findItem(R.id.action_search);
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
     }
@@ -71,7 +70,6 @@ public class TasksListFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        //Log.d(TAG, "onResume()");
         viewModel.onResume();
 
         addSubscription(RxSearchView.queryTextChanges(searchView)
@@ -83,7 +81,6 @@ public class TasksListFragment extends BaseFragment {
         addSubscription(Pipe.recvEvent(TaskRemovedEvent.class, taskRemovedEvent ->
             Snackbar.make(b.getRoot(), R.string.task_removed, Snackbar.LENGTH_LONG)
                     .setAction(R.string.undo_action, v -> {
-                        //Log.d(TAG, "Sending " + TaskRestoredEvent.class);
                         Pipe.sendEvent(new TaskRestoredEvent(taskRemovedEvent.getAdapterPosition()));
                     })
                     .show()
@@ -93,7 +90,6 @@ public class TasksListFragment extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
-        //Log.d(TAG, "onPause()");
         viewModel.onPause();
     }
 

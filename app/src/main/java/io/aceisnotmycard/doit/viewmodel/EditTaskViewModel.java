@@ -1,18 +1,15 @@
 package io.aceisnotmycard.doit.viewmodel;
 
 import android.content.Context;
-import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.util.Log;
 
-import io.aceisnotmycard.doit.BR;
 import io.aceisnotmycard.doit.db.TaskDao;
 import io.aceisnotmycard.doit.model.Task;
 import io.aceisnotmycard.doit.pipeline.Pipe;
 import io.aceisnotmycard.doit.pipeline.events.TaskUpdatedEvent;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by sergey on 22/10/15.
@@ -45,7 +42,6 @@ public class EditTaskViewModel extends BaseViewModel {
     }
 
     private void createOrUpdate(Task updater) {
-        Log.d(TAG, "createOrUpdate()");
         task.setImportant(updater.isImportant());
         task.setText(updater.getText());
         task.setTitle(updater.getTitle());

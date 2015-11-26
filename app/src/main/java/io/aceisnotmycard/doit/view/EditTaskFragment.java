@@ -203,11 +203,11 @@ public class EditTaskFragment extends BaseFragment {
     }
 
     private void shareTask() {
-        Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TITLE, b.editTaskTitle.getText().toString());
-        sendIntent.putExtra(Intent.EXTRA_TEXT, b.editTaskText.getText().toString());
-        sendIntent.setType("text/plain");
+        Intent sendIntent = new Intent()
+                .setAction(Intent.ACTION_SEND)
+                .putExtra(Intent.EXTRA_TITLE, b.editTaskTitle.getText().toString())
+                .putExtra(Intent.EXTRA_TEXT, b.editTaskText.getText().toString())
+                .setType("text/plain");
         getActivity().startActivity(Intent.createChooser(sendIntent, getActivity().getResources().getText(R.string.action_share)));
     }
 }
