@@ -6,7 +6,7 @@
 
         <variable
             name="viewModel"
-            type="io.aceisnotmycard.doit.viewmodel.TasksListViewModel" />
+            type="io.aceisnotmycard.yono.viewmodel.TasksListViewModel" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout
@@ -32,6 +32,7 @@
                 android:id="@+id/tasks_list_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:paddingTop="4dp"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         </LinearLayout>
