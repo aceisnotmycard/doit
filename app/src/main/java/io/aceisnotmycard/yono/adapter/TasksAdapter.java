@@ -66,7 +66,9 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         final Task t = items.get(position);
+        holder.setTask(t);
         holder.getBinding().setViewModel(new ListItemViewModel(t));
+        holder.getBinding().executePendingBindings();
     }
 
     @Override
@@ -83,36 +85,36 @@ public class TasksAdapter extends RecyclerView.Adapter<TasksAdapter.ViewHolder> 
 
     @Override
     public boolean onItemMoved(int fromPosition, int toPosition) {
-        if (fromPosition < toPosition) {
-            for (int i = fromPosition; i < toPosition; i++) {
-                Collections.swap(items, i, i + 1);
-            }
-        } else {
-            for (int i = fromPosition; i > toPosition; i--) {
-                Collections.swap(items, i, i - 1);
-            }
-        }
+        Collections.swap(items, fromPosition, toPosition);
         int tmp = items.get(fromPosition).getPosition();
         items.get(fromPosition).setPosition(items.get(toPosition).getPosition());
         items.get(toPosition).setPosition(tmp);
-        Pipe.sendEvent(new TaskUpdatedEvent(items.get(toPosition)));
-        Pipe.sendEvent(new TaskUpdatedEvent(items.get(fromPosition)));
         notifyItemMoved(fromPosition, toPosition);
         return true;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TaskItemBinding binding;
+        private TaskItemBinding b;
 
-        public ViewHolder(TaskItemBinding binding) {
-            super(binding.getRoot());
-            this.binding = binding;
-            itemView.setOnClickListener(v -> Pipe.sendEvent(new TasksListClickEvent(binding.getViewModel().getTask())));
+        private Task task;
+
+        public ViewHolder(TaskItemBinding b) {
+            super(b.getRoot());
+            this.b = b;
+            itemView.setOnClickListener(v -> Pipe.sendEvent(new TasksListClickEvent(getTask())));
         }
 
         public TaskItemBinding getBinding() {
-            return binding;
+            return b;
+        }
+
+        public Task getTask() {
+            return task;
+        }
+
+        public void setTask(Task task) {
+            this.task = task;
         }
     }
 }

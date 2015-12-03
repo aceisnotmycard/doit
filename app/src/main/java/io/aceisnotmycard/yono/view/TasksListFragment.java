@@ -1,5 +1,6 @@
 package io.aceisnotmycard.yono.view;
 
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -43,7 +44,6 @@ public class TasksListFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Log.d(TAG, "onCreate()");
         setRetainInstance(true);
     }
 

@@ -53,6 +53,7 @@
                         android:textSize="24sp"
                         android:background="@android:color/transparent"
                         android:hint="@string/title_hint"
+                        android:textCursorDrawable="@null"
                         android:text="@{viewModel.title}" />
 
 
@@ -63,6 +64,7 @@
                         android:layout_margin="8dp"
                         android:background="@android:color/transparent"
                         android:hint="@string/text_hint"
+                        android:textCursorDrawable="@null"
                         android:text="@{viewModel.text}" />
                 </LinearLayout>
             </android.support.v7.widget.CardView>

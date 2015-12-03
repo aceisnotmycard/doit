@@ -1,4 +1,4 @@
-package io.aceisnotmycard.doit;
+package io.aceisnotmycard.yono;
 
 import org.junit.Test;
 

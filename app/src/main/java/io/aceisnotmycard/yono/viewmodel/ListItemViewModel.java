@@ -5,9 +5,7 @@ import android.databinding.Bindable;
 
 import io.aceisnotmycard.yono.model.Task;
 
-/**
- * Created by sergey on 19/10/15.
- */
+
 public class ListItemViewModel extends BaseObservable {
     private Task task;
 
@@ -21,6 +19,11 @@ public class ListItemViewModel extends BaseObservable {
     }
 
     @Bindable
+    public String getText() {
+        return task.getText();
+    }
+
+    @Bindable
     public boolean getImportant() {
         return task.isImportant();
     }
@@ -28,5 +31,4 @@ public class ListItemViewModel extends BaseObservable {
     public Task getTask() {
         return task;
     }
-
 }

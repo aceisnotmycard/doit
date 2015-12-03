@@ -1,6 +1,78 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-</LinearLayout>
+    <data>
+
+        <variable
+            name="viewModel"
+            type="io.aceisnotmycard.yono.viewmodel.EditTaskViewModel" />
+    </data>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/edit_task_layout">
+
+        <View android:id="@+id/edit_task_back_usual"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary"/>
+
+        <View android:id="@+id/edit_task_back_important"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorAccent"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/edit_task_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <android.support.v7.widget.CardView
+                android:layout_width="400dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:elevation="@dimen/elevation_small">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+                    <EditText
+                        android:id="@+id/edit_task_title"
+                        android:imeOptions="flagNoExtractUi"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:singleLine="true"
+                        android:textSize="24sp"
+                        android:background="@android:color/transparent"
+                        android:hint="@string/title_hint"
+                        android:textCursorDrawable="@null"
+                        android:text="@{viewModel.title}" />
+
+
+                    <EditText
+                        android:id="@+id/edit_task_text"
+                        android:imeOptions="flagNoExtractUi"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:background="@android:color/transparent"
+                        android:hint="@string/text_hint"
+                        android:textCursorDrawable="@null"
+                        android:text="@{viewModel.text}" />
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+        </LinearLayout>
+    </android.support.design.widget.CoordinatorLayout>
+
+</layout>

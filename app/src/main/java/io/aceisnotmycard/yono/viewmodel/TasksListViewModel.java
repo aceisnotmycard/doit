@@ -42,10 +42,6 @@ public class TasksListViewModel extends BaseViewModel {
                     lastRemovedItem = taskRemovedEvent.getData();
                     TaskDao.getDao(context).delete(lastRemovedItem);
                 }));
-
-        addSubscription(Pipe.recvEvent(TaskUpdatedEvent.class, AndroidSchedulers.mainThread(), Schedulers.io(),
-                taskUpdatedEvent -> TaskDao.getDao(context).update(taskUpdatedEvent.getData())));
-
         addSubscription(Pipe.recvEvent(TaskRestoredEvent.class, taskRestoredEvent -> {
             //Log.d(TAG, "Received " + taskRestoredEvent.getClass());
             if (lastRemovedItem != null) {
@@ -67,7 +63,9 @@ public class TasksListViewModel extends BaseViewModel {
     @Override
     public void onPause() {
         super.onPause();
-        //context = null;
+        for (Task task : items) {
+            TaskDao.getDao(context).update(task);
+        }
     }
 
     private Subscription getTasks(String term) {
