@@ -1,0 +1,61 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="viewModel"
+            type="io.aceisnotmycard.yono.viewmodel.ListItemViewModel"/>
+    </data>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/task_item_view"
+        android:layout_width='match_parent'
+        android:layout_height="wrap_content"
+        android:minHeight="?android:attr/listPreferredItemHeight"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
+        app:cardCornerRadius="2dp"
+        app:cardElevation="@dimen/elevation_small"
+        app:cardBackgroundColor="@color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/task_item_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_gravity="center_vertical"
+                android:textSize="@dimen/normal_text_size"
+                android:textColor="#87000000"
+                android:text="@{viewModel.title}" />
+            <TextView
+                android:id="@+id/task_item_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp"
+                android:textSize="@dimen/secondary_text_size"
+                android:textColor="#54000000"
+                android:ellipsize="end"
+                android:text="@{viewModel.text}" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_gravity="end"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="-5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_bookmark_red_32dp"
+            app:visibility="@{viewModel.important ? View.VISIBLE : View.GONE}" />
+
+    </android.support.v7.widget.CardView>
+</layout>
