@@ -43,7 +43,6 @@ public class TasksListViewModel extends BaseViewModel {
                     TaskDao.getDao(context).delete(lastRemovedItem);
                 }));
         addSubscription(Pipe.recvEvent(TaskRestoredEvent.class, taskRestoredEvent -> {
-            //Log.d(TAG, "Received " + taskRestoredEvent.getClass());
             if (lastRemovedItem != null) {
                 TaskDao.getDao(context).insert(lastRemovedItem.getPosition(), lastRemovedItem);
                 items.add(taskRestoredEvent.getData(), lastRemovedItem);
@@ -64,7 +63,9 @@ public class TasksListViewModel extends BaseViewModel {
     public void onPause() {
         super.onPause();
         for (Task task : items) {
-            TaskDao.getDao(context).update(task);
+            if (task.isChanged()) {
+                TaskDao.getDao(context).update(task);
+            }
         }
     }
 

@@ -8,12 +8,14 @@ public class Task implements Parcelable {
     private int position;
     private String text;
     private boolean important;
+    private boolean isChanged;
 
     public Task(String title, int position, String text, boolean important) {
         this.title = title;
         this.position = position;
         this.text = text;
         this.important = important;
+        this.isChanged = false;
     }
 
     public Task() {}
@@ -22,6 +24,7 @@ public class Task implements Parcelable {
         this.title = title;
         this.text = text;
         this.important = important;
+        this.isChanged = false;
     }
 
     public String getTitle() {
@@ -40,12 +43,17 @@ public class Task implements Parcelable {
         return important;
     }
 
+    public boolean isChanged() {
+        return isChanged;
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
 
     public void setPosition(int position) {
         this.position = position;
+        isChanged = true;
     }
 
     public void setText(String text) {

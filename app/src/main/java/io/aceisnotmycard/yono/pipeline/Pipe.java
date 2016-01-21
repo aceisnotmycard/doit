@@ -1,7 +1,5 @@
 package io.aceisnotmycard.yono.pipeline;
 
-import java.util.concurrent.TimeUnit;
-
 import rx.Scheduler;
 import rx.Subscription;
 import rx.functions.Action1;
@@ -35,17 +33,6 @@ public class Pipe {
                 .map(eventType::cast)
                 .subscribeOn(subsribeOn)
                 .observeOn(observeOn)
-                .subscribe(func);
-    }
-
-    public static <T extends AbstactEvent> Subscription recvEvent(
-            Class<T> eventType, Scheduler subsribeOn, Scheduler observeOn, long debounce, Action1<T> func) {
-        return eventSubject
-                .filter(eventType::isInstance)
-                .map(eventType::cast)
-                .subscribeOn(subsribeOn)
-                .observeOn(observeOn)
-                .debounce(debounce, TimeUnit.MILLISECONDS)
                 .subscribe(func);
     }
 }

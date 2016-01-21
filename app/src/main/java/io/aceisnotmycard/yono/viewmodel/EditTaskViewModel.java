@@ -45,7 +45,7 @@ public class EditTaskViewModel extends BaseViewModel {
         task.setImportant(updater.isImportant());
         task.setText(updater.getText());
         task.setTitle(updater.getTitle());
-        if (!task.getTitle().isEmpty()) {
+        if (!task.getTitle().isEmpty() || !task.getText().isEmpty()) {
             if (isNew) {
                 isNew = false;
                 int id = TaskDao.getDao(context).insert(updater);

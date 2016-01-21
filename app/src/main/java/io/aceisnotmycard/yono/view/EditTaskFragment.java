@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,6 +39,7 @@ public class EditTaskFragment extends BaseFragment {
     private static final String TAG = EditTaskFragment.class.getSimpleName();
 
     private static final String ARG_TASK = "arg_task";
+    private static final String LOG_TAG = EditTaskFragment.class.getName();
 
 
     private EditTaskViewModel viewModel;
@@ -106,20 +108,6 @@ public class EditTaskFragment extends BaseFragment {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_share:
-                shareTask();
-                return true;
-            case R.id.action_make_important:
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-
-    @Override
     public void onResume() {
         super.onResume();
         viewModel.onResume();
@@ -136,8 +124,8 @@ public class EditTaskFragment extends BaseFragment {
                 .doOnNext(this::setImportantDesign)
                 .startWith(viewModel.getImportant());
 
-        addSubscription(rx.Observable.combineLatest(titleObs, textObs, importantObs, (title, text, important) ->
-                new TaskUpdatedEvent(new Task(title, text, important)))
+        addSubscription(rx.Observable.combineLatest(titleObs, textObs, importantObs,
+                (title, text, important) -> new TaskUpdatedEvent(new Task(title, text, important)))
                 .debounce(250L, TimeUnit.MILLISECONDS)
                 .subscribe(Pipe::sendEvent));
     }
@@ -205,12 +193,12 @@ public class EditTaskFragment extends BaseFragment {
         }
     }
 
-    private void shareTask() {
-        Intent sendIntent = new Intent()
-                .setAction(Intent.ACTION_SEND)
-                .putExtra(Intent.EXTRA_TITLE, b.editTaskTitle.getText().toString())
-                .putExtra(Intent.EXTRA_TEXT, b.editTaskText.getText().toString())
-                .setType("text/plain");
-        getActivity().startActivity(Intent.createChooser(sendIntent, getActivity().getResources().getText(R.string.action_share)));
-    }
+//    private void shareTask() {
+//        Intent sendIntent = new Intent()
+//                .setAction(Intent.ACTION_SEND)
+//                .putExtra(Intent.EXTRA_TITLE, b.editTaskTitle.getText().toString())
+//                .putExtra(Intent.EXTRA_TEXT, b.editTaskText.getText().toString())
+//                .setType("text/plain");
+//        getActivity().startActivity(Intent.createChooser(sendIntent, getActivity().getResources().getText(R.string.action_share)));
+//    }
 }

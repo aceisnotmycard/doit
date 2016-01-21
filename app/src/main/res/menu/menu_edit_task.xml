@@ -5,10 +5,5 @@
         android:id="@+id/action_make_important"
         android:icon="@drawable/ic_bookmark_24dp"
         android:title="@string/action_make_important"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/action_share"
-        android:icon="@drawable/ic_share_24dp"
-        android:title="@string/action_share"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 </menu>

@@ -26,6 +26,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/colorPrimary"
                 android:elevation="10dp"
+                android:theme="@style/AppToolbar"
                 app:layout_scrollFlags="scroll|enterAlways">
             </android.support.v7.widget.Toolbar>
 
