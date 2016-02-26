@@ -20,7 +20,6 @@ public class DoItHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + DoItContract.Task.TABLE_NAME + "(" +
                         DoItContract.Task.COL_TEXT + " TEXT, " +
-                        DoItContract.Task.COL_TITLE + " TEXT NOT NULL, " +
                         DoItContract.Task.COL_IMPORTANT + " INTEGER NOT NULL, " +
                         DoItContract.Task._ID + " INTEGER PRIMARY KEY AUTOINCREMENT" +
                         ");"

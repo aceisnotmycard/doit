@@ -4,14 +4,12 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Task implements Parcelable {
-    private String title;
     private int position;
     private String text;
     private boolean important;
     private boolean isChanged;
 
-    public Task(String title, int position, String text, boolean important) {
-        this.title = title;
+    public Task(int position, String text, boolean important) {
         this.position = position;
         this.text = text;
         this.important = important;
@@ -20,15 +18,10 @@ public class Task implements Parcelable {
 
     public Task() {}
 
-    public Task(String title, String text, boolean important) {
-        this.title = title;
+    public Task(String text, boolean important) {
         this.text = text;
         this.important = important;
         this.isChanged = false;
-    }
-
-    public String getTitle() {
-        return title;
     }
 
     public int getPosition() {
@@ -45,10 +38,6 @@ public class Task implements Parcelable {
 
     public boolean isChanged() {
         return isChanged;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public void setPosition(int position) {
@@ -77,7 +66,6 @@ public class Task implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(getTitle());
         dest.writeString(getText());
         dest.writeInt(getPosition());
         dest.writeByte((byte) (isImportant() ? 1 : 0));
@@ -91,7 +79,7 @@ public class Task implements Parcelable {
             String text = source.readString();
             int pos = source.readInt();
             boolean i = source.readByte() > 0;
-            return new Task(title, pos, text, i);
+            return new Task(pos, text, i);
         }
 
         @Override

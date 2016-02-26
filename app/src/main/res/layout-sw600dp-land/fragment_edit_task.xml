@@ -9,6 +9,9 @@
     </data>
 
     <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
         android:id="@+id/edit_task_layout">
 
         <View android:id="@+id/edit_task_back_usual"
@@ -46,19 +49,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
-                    <EditText
-                        android:id="@+id/edit_task_title"
-                        android:imeOptions="flagNoExtractUi"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
-                        android:singleLine="true"
-                        android:textSize="24sp"
-                        android:background="@android:color/transparent"
-                        android:hint="@string/title_hint"
-                        android:textCursorDrawable="@null"
-                        android:text="@{viewModel.title}" />
-
 
                     <EditText
                         android:id="@+id/edit_task_text"

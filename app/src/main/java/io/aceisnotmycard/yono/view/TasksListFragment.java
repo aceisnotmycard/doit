@@ -1,6 +1,5 @@
 package io.aceisnotmycard.yono.view;
 
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -69,7 +68,7 @@ public class TasksListFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        viewModel.onResume();
+        viewModel.onResume(getActivity());
 
         addSubscription(RxSearchView.queryTextChanges(searchView)
                 .map(CharSequence::toString)
@@ -89,7 +88,7 @@ public class TasksListFragment extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
-        viewModel.onPause();
+        viewModel.onPause(getActivity());
     }
 
     private void setupAdapter() {

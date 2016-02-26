@@ -14,11 +14,6 @@ public class ListItemViewModel extends BaseObservable {
     }
 
     @Bindable
-    public String getTitle() {
-        return task.getTitle();
-    }
-
-    @Bindable
     public String getText() {
         return task.getText();
     }

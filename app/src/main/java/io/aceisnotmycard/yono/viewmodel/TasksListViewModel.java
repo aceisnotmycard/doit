@@ -20,31 +20,28 @@ public class TasksListViewModel extends BaseViewModel {
     public static final String TAG = TasksListViewModel.class.getName();
 
     private ObservableArrayList<Task> items;
-    private Context context;
     private String searchTerm;
     private Task lastRemovedItem;
 
-    public TasksListViewModel(Context context) {
+    public TasksListViewModel(Context ctx) {
         super();
-        this.context = context;
         items = new ObservableArrayList<>();
 
         if (searchTerm == null) {
-            getTasks("");
+            getTasks("", ctx);
         }
     }
 
-    @Override
-    public void onResume() {
+    public void onResume(Context ctx) {
         super.onResume();
         addSubscription(Pipe.recvEvent(TaskRemovedEvent.class, AndroidSchedulers.mainThread(), Schedulers.io(),
                 taskRemovedEvent -> {
                     lastRemovedItem = taskRemovedEvent.getData();
-                    TaskDao.getDao(context).delete(lastRemovedItem);
+                    TaskDao.getDao(ctx).delete(lastRemovedItem);
                 }));
         addSubscription(Pipe.recvEvent(TaskRestoredEvent.class, taskRestoredEvent -> {
             if (lastRemovedItem != null) {
-                TaskDao.getDao(context).insert(lastRemovedItem.getPosition(), lastRemovedItem);
+                TaskDao.getDao(ctx).insert(lastRemovedItem.getPosition(), lastRemovedItem);
                 items.add(taskRestoredEvent.getData(), lastRemovedItem);
             } else {
                 Log.e(TAG, "Tried to restore null item");
@@ -52,24 +49,23 @@ public class TasksListViewModel extends BaseViewModel {
         }));
 
         addSubscription(Pipe.recvEvent(SearchEvent.class, AndroidSchedulers.mainThread(), Schedulers.io(),
-                searchEvent -> getTasks(searchEvent.getData())));
+                searchEvent -> getTasks(searchEvent.getData(), ctx)));
     }
 
     public ObservableArrayList<Task> getItems() {
         return items;
     }
 
-    @Override
-    public void onPause() {
+    public void onPause(Context ctx) {
         super.onPause();
         for (Task task : items) {
             if (task.isChanged()) {
-                TaskDao.getDao(context).update(task);
+                TaskDao.getDao(ctx).update(task);
             }
         }
     }
 
-    private Subscription getTasks(String term) {
+    private Subscription getTasks(String term, Context context) {
         return TaskDao.getDao(context).searchFor(term)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

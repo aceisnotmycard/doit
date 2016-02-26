@@ -6,10 +6,10 @@ android {
     buildToolsVersion "23.0.2"
     defaultConfig {
         applicationId "io.aceisnotmycard.doit"
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 23
-        versionCode 3
-        versionName "Uno"
+        versionCode 4
+        versionName "beta_1"
     }
     buildTypes {
         release {

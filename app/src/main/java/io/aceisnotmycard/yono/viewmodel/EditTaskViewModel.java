@@ -20,10 +20,9 @@ public class EditTaskViewModel extends BaseViewModel {
     public static final String TAG = EditTaskViewModel.class.getSimpleName();
 
     private Task task;
-    private Context context;
     private boolean isNew;
 
-    public EditTaskViewModel(Task task, Context context) {
+    public EditTaskViewModel(Task task) {
         if (task != null) {
             this.task = task;
             isNew = false;
@@ -31,36 +30,28 @@ public class EditTaskViewModel extends BaseViewModel {
             this.task = new Task();
             isNew = true;
         }
-        this.context = context;
     }
 
-    @Override
-    public void onResume() {
+    public void onResume(Context ctx) {
         super.onResume();
         addSubscription(Pipe.recvEvent(TaskUpdatedEvent.class, AndroidSchedulers.mainThread(), Schedulers.io(),
-                taskUpdatedEvent -> createOrUpdate(taskUpdatedEvent.getData())));
+                taskUpdatedEvent -> createOrUpdate(taskUpdatedEvent.getData(), ctx)));
     }
 
-    private void createOrUpdate(Task updater) {
+    private void createOrUpdate(Task updater, Context ctx) {
         task.setImportant(updater.isImportant());
         task.setText(updater.getText());
-        task.setTitle(updater.getTitle());
-        if (!task.getTitle().isEmpty() || !task.getText().isEmpty()) {
+        if (!task.getText().isEmpty()) {
             if (isNew) {
                 isNew = false;
-                int id = TaskDao.getDao(context).insert(updater);
+                int id = TaskDao.getDao(ctx).insert(updater);
                 task.setPosition(id);
             } else {
-                if (!TaskDao.getDao(context).update(task)) {
+                if (!TaskDao.getDao(ctx).update(task)) {
                     Log.e(TAG, "Task is not updated for some reason");
                 }
             }
         }
-    }
-
-    @Bindable
-    public String getTitle() {
-        return task.getTitle();
     }
 
     @Bindable
@@ -75,6 +66,5 @@ public class EditTaskViewModel extends BaseViewModel {
 
     public void onPause() {
         super.onPause();
-        context = null;
     }
 }

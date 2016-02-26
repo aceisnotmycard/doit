@@ -43,8 +43,7 @@ public class TaskDao {
     public Observable<List<Task>> searchFor(String term) {
         return db.createQuery(DoItContract.Task.TABLE_NAME,
                 "SELECT * FROM " + DoItContract.Task.TABLE_NAME
-                        + " WHERE " + DoItContract.Task.COL_TITLE + " LIKE " + "'%" + term + "%'"
-                        + " OR " + DoItContract.Task.COL_TEXT + " LIKE " + "'%" + term + "%'")
+                        + " WHERE " + DoItContract.Task.COL_TEXT + " LIKE " + "'%" + term + "%'")
                 .mapToList(MAPPER)
                 .take(1);
     }
@@ -52,14 +51,13 @@ public class TaskDao {
     // for debug
     private void printTasks(List<Task> tasks) {
         for (Task t : tasks) {
-            Log.i("Task", "Position: " + t.getPosition() + " title: " + t.getTitle());
+            Log.i("Task", "Position: " + t.getPosition() + " text: " + t.getText());
         }
     }
 
     public int insert(Task task) {
         ContentValues cv = new Builder()
                 .text(task.getText())
-                .title(task.getTitle())
                 .important(task.isImportant())
                 .build();
         return (int) db.insert(DoItContract.Task.TABLE_NAME, cv);
@@ -68,7 +66,6 @@ public class TaskDao {
     public int insert(int pos, Task task) {
         ContentValues cv = new Builder()
                 .text(task.getText())
-                .title(task.getTitle())
                 .important(task.isImportant())
                 .position(pos)
                 .build();
@@ -78,7 +75,6 @@ public class TaskDao {
     public boolean update(Task task) {
         ContentValues cv = new Builder()
                 .text(task.getText())
-                .title(task.getTitle())
                 .position(task.getPosition())
                 .important(task.isImportant())
                 .build();
@@ -91,20 +87,14 @@ public class TaskDao {
 
     private static final Func1<Cursor, Task> MAPPER = c -> {
         int id = (int) c.getLong(c.getColumnIndex(DoItContract.Task._ID));
-        String title = c.getString(c.getColumnIndex(DoItContract.Task.COL_TITLE));
         String text = c.getString(c.getColumnIndex(DoItContract.Task.COL_TEXT));
         boolean important = c.getInt(c.getColumnIndex(DoItContract.Task.COL_IMPORTANT)) > 0;
-        return new Task(title, id, text, important);
+        return new Task(id, text, important);
     };
 
 
     public static class Builder {
         private final ContentValues cv = new ContentValues();
-
-        public Builder title(String title) {
-            cv.put(DoItContract.Task.COL_TITLE, title);
-            return this;
-        }
 
         public Builder text(String text) {
             cv.put(DoItContract.Task.COL_TEXT, text);
